@@ -1,6 +1,7 @@
 import React, { useEffect } from 'react';
 import { View, ScrollView, Text, ActivityIndicator } from 'react-native';
-import { SafeAreaView } from 'react-native-safe-area-context';
+import { SafeAreaView, useSafeAreaInsets } from 'react-native-safe-area-context';
+import { useRouter } from 'expo-router';
 import { DailyCard } from '@/src/components/home/DailyCard';
 import { usePrinciples } from '@/src/store/usePrinciples';
 import { useDaily } from '@/src/store/useDaily';
@@ -11,6 +12,8 @@ export default function HomeScreen() {
   const { loadPrinciples, isLoading: principlesLoading } = usePrinciples();
   const { todaysPrinciple, loadTodaysPrinciple, isLoading: dailyLoading } = useDaily();
   const { loadFavorites } = useFavorites();
+  const router = useRouter();
+  const insets = useSafeAreaInsets();
 
   useEffect(() => {
     // Load data when screen mounts
@@ -55,16 +58,17 @@ export default function HomeScreen() {
   }
 
   const handleLearnMore = () => {
-    // TODO: Navigate to detail screen
-    console.log('Navigate to principle detail:', todaysPrinciple.id);
+    if (todaysPrinciple) {
+      router.push(`/principle/${todaysPrinciple.id}`);
+    }
   };
 
   return (
-    <SafeAreaView className="flex-1 bg-gray-50">
+    <SafeAreaView className="flex-1 bg-gray-50" edges={['top']}>
       <ScrollView 
         className="flex-1"
         showsVerticalScrollIndicator={false}
-        contentContainerStyle={{ paddingBottom: 32, paddingTop: 16 }}
+        contentContainerStyle={{ paddingBottom: insets.bottom + 80, paddingTop: 16 }}
       >
         {/* Daily Principle Card */}
         <DailyCard 

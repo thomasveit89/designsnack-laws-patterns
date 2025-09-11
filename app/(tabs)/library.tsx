@@ -1,6 +1,7 @@
 import React, { useState, useMemo, useEffect } from 'react';
 import { View, ScrollView, Text, FlatList } from 'react-native';
-import { SafeAreaView } from 'react-native-safe-area-context';
+import { SafeAreaView, useSafeAreaInsets } from 'react-native-safe-area-context';
+import { useRouter } from 'expo-router';
 import { PrincipleListCard } from '@/src/components/library/PrincipleListCard';
 import { SearchInput } from '@/src/components/ui/SearchInput';
 import { CategoryChip } from '@/src/components/shared/CategoryChip';
@@ -16,6 +17,8 @@ export default function LibraryScreen() {
   const [searchQuery, setSearchQuery] = useState('');
   const [categoryFilter, setCategoryFilter] = useState<CategoryFilter>('all');
   const [sortBy, setSortBy] = useState<SortOption>('alphabetical');
+  const router = useRouter();
+  const insets = useSafeAreaInsets();
 
   useEffect(() => {
     loadPrinciples();
@@ -69,8 +72,7 @@ export default function LibraryScreen() {
   }, [principles, searchQuery, categoryFilter, sortBy]);
 
   const handlePrinciplePress = (principle: Principle) => {
-    // TODO: Navigate to principle detail screen
-    console.log('Navigate to principle:', principle.id);
+    router.push(`/principle/${principle.id}`);
   };
 
   const renderPrinciple = ({ item }: { item: Principle }) => (
@@ -82,7 +84,7 @@ export default function LibraryScreen() {
   );
 
   return (
-    <SafeAreaView className="flex-1 bg-gray-50">
+    <SafeAreaView className="flex-1 bg-gray-50" edges={['top']}>
       {/* Header */}
       <View className="px-6 pt-4 pb-2">
         <Text className="text-2xl font-bold text-gray-900 mb-4">
@@ -108,7 +110,7 @@ export default function LibraryScreen() {
             <CategoryChip 
               category="All"
               size="md"
-              className={categoryFilter === 'all' ? 'bg-brand-primary' : ''}
+              selected={categoryFilter === 'all'}
               onPress={() => setCategoryFilter('all')}
             />
             {categoriesData.map((category) => (
@@ -116,7 +118,7 @@ export default function LibraryScreen() {
                 key={category.id}
                 category={category.label}
                 size="md"
-                className={categoryFilter === category.label ? 'opacity-100' : 'opacity-70'}
+                selected={categoryFilter === category.label}
                 onPress={() => setCategoryFilter(category.label)}
               />
             ))}
@@ -141,7 +143,7 @@ export default function LibraryScreen() {
         showsVerticalScrollIndicator={false}
         contentContainerStyle={{ 
           paddingHorizontal: 24, 
-          paddingBottom: 32 
+          paddingBottom: insets.bottom + 80
         }}
         ListEmptyComponent={
           <View className="items-center justify-center py-12">

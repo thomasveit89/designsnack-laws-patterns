@@ -8,13 +8,15 @@ interface CategoryChipProps {
   size?: 'sm' | 'md';
   className?: string;
   onPress?: () => void;
+  selected?: boolean;
 }
 
 export function CategoryChip({ 
   category, 
   size = 'md',
   className,
-  onPress
+  onPress,
+  selected = false
 }: CategoryChipProps) {
   const color = CATEGORY_COLORS[category as keyof typeof CATEGORY_COLORS] || '#64748B';
   
@@ -39,7 +41,7 @@ export function CategoryChip({
         onPress && 'active:opacity-70',
         className
       )}
-      style={{ backgroundColor: `${color}15` }} // 15% opacity
+      style={{ backgroundColor: selected ? '#000000' : `${color}15` }}
       activeOpacity={0.7}
     >
       <Text 
@@ -47,7 +49,7 @@ export function CategoryChip({
           'font-medium capitalize',
           textStyles[size]
         )}
-        style={{ color }}
+        style={{ color: selected ? '#ffffff' : color }}
       >
         {category}
       </Text>

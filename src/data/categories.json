@@ -1,0 +1,26 @@
+[
+  {
+    "id": "attention",
+    "label": "Attention",
+    "description": "How users notice, focus on, and process visual information",
+    "color": "#EF4444"
+  },
+  {
+    "id": "memory", 
+    "label": "Memory",
+    "description": "How users store, recall, and work with information in their minds",
+    "color": "#8B5CF6"
+  },
+  {
+    "id": "decisions",
+    "label": "Decision Making", 
+    "description": "How users evaluate options, make choices, and form judgments",
+    "color": "#10B981"
+  },
+  {
+    "id": "usability",
+    "label": "Usability",
+    "description": "How users interact with and navigate through interfaces effectively",
+    "color": "#F59E0B"
+  }
+]

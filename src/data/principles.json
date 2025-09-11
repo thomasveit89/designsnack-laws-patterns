@@ -1,0 +1,542 @@
+[
+  {
+    "id": "fitts-law",
+    "type": "ux_law",
+    "title": "Fitts's Law",
+    "oneLiner": "Larger, closer targets are faster to reach",
+    "definition": "The time required to move to a target depends on the target's size and distance. Larger targets that are closer to the starting position can be acquired faster than smaller, more distant targets.",
+    "appliesWhen": ["buttons", "navigation", "touch targets", "menus"],
+    "do": [
+      "Make important buttons larger and easier to hit",
+      "Place frequently used controls closer to users' natural hand positions",
+      "Ensure touch targets are at least 44pt (iOS) or 48dp (Android)",
+      "Position related actions close together"
+    ],
+    "dont": [
+      "Make critical buttons too small or hard to reach",
+      "Place important actions at screen edges on large displays",
+      "Use tiny touch targets that require precision",
+      "Separate related actions by large distances"
+    ],
+    "example": {
+      "image": "fitts-law.png",
+      "caption": "Mobile keyboards place frequently used keys larger and closer to thumbs"
+    },
+    "tags": ["interaction", "usability", "mobile", "accessibility"],
+    "category": "usability",
+    "sources": ["https://www.interaction-design.org/literature/article/fitts-s-law-the-importance-of-size-and-distance-in-ui-design"]
+  },
+  {
+    "id": "hicks-law",
+    "type": "ux_law",
+    "title": "Hick's Law",
+    "oneLiner": "More options → slower decisions",
+    "definition": "The time it takes to make a decision increases logarithmically with the number of choices available. Users become overwhelmed and decision-making slows when presented with too many options.",
+    "appliesWhen": ["menus", "navigation", "forms", "product catalogs"],
+    "do": [
+      "Limit menu items to 5-7 main categories",
+      "Use progressive disclosure to reveal options gradually",
+      "Group similar options together logically",
+      "Highlight recommended or popular choices"
+    ],
+    "dont": [
+      "Present all options at once without organization",
+      "Create menus with more than 7-10 items",
+      "Force users to choose from dozens of similar options",
+      "Hide important actions too deeply"
+    ],
+    "example": {
+      "image": "hicks-law.png",
+      "caption": "Netflix uses categories and recommendations to reduce choice overload"
+    },
+    "tags": ["navigation", "choices", "cognitive-load", "decision-making"],
+    "category": "decisions",
+    "sources": ["https://lawsofux.com/hicks-law/"]
+  },
+  {
+    "id": "millers-rule",
+    "type": "ux_law",
+    "title": "Miller's Rule",
+    "oneLiner": "People can only hold 7±2 items in working memory",
+    "definition": "The average person can hold about 7 (plus or minus 2) items in their working memory at once. This applies to navigation menus, form fields, and any interface requiring users to remember multiple pieces of information.",
+    "appliesWhen": ["navigation menus", "forms", "lists", "step indicators"],
+    "do": [
+      "Limit main navigation to 5-9 items maximum",
+      "Break long forms into smaller, logical sections",
+      "Use chunking to group related information",
+      "Provide clear progress indicators for multi-step processes"
+    ],
+    "dont": [
+      "Create navigation menus with more than 9 top-level items",
+      "Present long lists without categorization",
+      "Design forms with too many fields on one screen",
+      "Expect users to remember complex sequences"
+    ],
+    "example": {
+      "image": "millers-rule.png",
+      "caption": "Phone numbers are chunked (555-123-4567) to aid memory"
+    },
+    "tags": ["memory", "cognitive-load", "navigation", "information-architecture"],
+    "category": "memory",
+    "sources": ["https://www.nngroup.com/articles/chunking/"]
+  },
+  {
+    "id": "jakobs-law",
+    "type": "ux_law",
+    "title": "Jakob's Law",
+    "oneLiner": "Users expect your site to work like other sites they know",
+    "definition": "Users spend most of their time on other websites and mobile apps, so they prefer your site to work the same way as all the other sites they already know. Consistency with established patterns reduces cognitive load.",
+    "appliesWhen": ["navigation patterns", "form layouts", "iconography", "user flows"],
+    "do": [
+      "Follow established design patterns and conventions",
+      "Place navigation where users expect it (top or left)",
+      "Use familiar icons and interaction patterns",
+      "Match user expectations for common actions"
+    ],
+    "dont": [
+      "Reinvent common interface patterns unnecessarily",
+      "Place navigation in unexpected locations",
+      "Use unconventional icons without labels",
+      "Create unique flows for standard actions"
+    ],
+    "example": {
+      "image": "jakobs-law.png",
+      "caption": "E-commerce sites consistently place shopping carts in the top-right corner"
+    },
+    "tags": ["consistency", "usability", "mental-models", "conventions"],
+    "category": "usability",
+    "sources": ["https://lawsofux.com/jakobs-law/"]
+  },
+  {
+    "id": "pareto-principle",
+    "type": "ux_law",
+    "title": "Pareto Principle",
+    "oneLiner": "80% of effects come from 20% of causes",
+    "definition": "Also known as the 80/20 rule, this principle suggests that roughly 80% of outcomes result from 20% of inputs. In UX, 80% of users typically use only 20% of features, so focus design effort on those critical features.",
+    "appliesWhen": ["feature prioritization", "navigation design", "content strategy", "optimization"],
+    "do": [
+      "Identify the 20% of features used by 80% of users",
+      "Make the most important features easily accessible",
+      "Prioritize optimization efforts on high-impact areas",
+      "Design primary actions prominently"
+    ],
+    "dont": [
+      "Give equal visual weight to all features",
+      "Bury commonly used functions in submenus",
+      "Spend equal development time on all features",
+      "Clutter interfaces with rarely used options"
+    ],
+    "example": {
+      "image": "pareto-principle.png",
+      "caption": "Microsoft Office ribbon emphasizes the 20% of features used most often"
+    },
+    "tags": ["prioritization", "feature-design", "efficiency", "focus"],
+    "category": "usability",
+    "sources": ["https://www.interaction-design.org/literature/article/the-pareto-principle-the-80-20-rule"]
+  },
+  {
+    "id": "proximity-principle",
+    "type": "ux_law",
+    "title": "Law of Proximity",
+    "oneLiner": "Objects close together are perceived as related",
+    "definition": "Items that are spatially close to each other tend to be perceived as belonging to the same group. This Gestalt principle helps users understand relationships and organize information visually.",
+    "appliesWhen": ["form design", "content layout", "navigation grouping", "information hierarchy"],
+    "do": [
+      "Group related form fields close together",
+      "Place labels near their corresponding inputs",
+      "Use consistent spacing to show relationships",
+      "Separate unrelated content with white space"
+    ],
+    "dont": [
+      "Place unrelated elements too close together",
+      "Use inconsistent spacing that confuses groupings",
+      "Separate labels too far from their inputs",
+      "Crowd the interface without logical grouping"
+    ],
+    "example": {
+      "image": "proximity-principle.png",
+      "caption": "Form fields are grouped by topic using proximity and spacing"
+    },
+    "tags": ["visual-design", "gestalt", "grouping", "layout"],
+    "category": "attention",
+    "sources": ["https://www.interaction-design.org/literature/topics/gestalt-principles"]
+  },
+  {
+    "id": "serial-position-effect",
+    "type": "ux_law",
+    "title": "Serial Position Effect",
+    "oneLiner": "Users remember first and last items best",
+    "definition": "In a list of items, people tend to remember the first few (primacy effect) and last few (recency effect) items best, while items in the middle are more likely to be forgotten or overlooked.",
+    "appliesWhen": ["navigation menus", "product lists", "form design", "content ordering"],
+    "do": [
+      "Place the most important items at the beginning or end of lists",
+      "Position key navigation items at the start or end of menus",
+      "End forms with clear call-to-action buttons",
+      "Start content with compelling hooks"
+    ],
+    "dont": [
+      "Bury important items in the middle of long lists",
+      "Place critical navigation in the center of menus",
+      "Hide important information in the middle of content",
+      "Make all list items look equally important"
+    ],
+    "example": {
+      "image": "serial-position-effect.png",
+      "caption": "Netflix places trending content at the top and personalized picks at the bottom"
+    },
+    "tags": ["memory", "ordering", "attention", "information-architecture"],
+    "category": "memory",
+    "sources": ["https://lawsofux.com/serial-position-effect/"]
+  },
+  {
+    "id": "zeigarnik-effect",
+    "type": "ux_law",
+    "title": "Zeigarnik Effect",
+    "oneLiner": "People remember interrupted tasks better than completed ones",
+    "definition": "Incomplete or interrupted tasks are better remembered than completed tasks. This creates mental tension that keeps the task active in memory until it's finished, which can be leveraged to increase engagement.",
+    "appliesWhen": ["progress indicators", "onboarding flows", "gamification", "content consumption"],
+    "do": [
+      "Show progress indicators to create completion desire",
+      "Use progress bars in multi-step processes",
+      "Highlight partially completed profiles or forms",
+      "Create natural stopping points in long content"
+    ],
+    "dont": [
+      "Leave users without clear next steps",
+      "Create overly complex multi-step processes",
+      "Make progress indicators misleading or inaccurate",
+      "Force completion of unnecessary steps"
+    ],
+    "example": {
+      "image": "zeigarnik-effect.png",
+      "caption": "LinkedIn shows profile completion percentage to encourage finishing"
+    },
+    "tags": ["engagement", "completion", "motivation", "progress"],
+    "category": "memory",
+    "sources": ["https://lawsofux.com/zeigarnik-effect/"]
+  },
+  {
+    "id": "peak-end-rule",
+    "type": "ux_law",
+    "title": "Peak-End Rule",
+    "oneLiner": "People judge experiences by their peak moment and how they end",
+    "definition": "Users remember an experience largely based on how they felt at its peak (most intense point) and at its end, rather than the total sum or average of every moment. The duration has little effect on the memory.",
+    "appliesWhen": ["user onboarding", "checkout processes", "customer support", "app launches"],
+    "do": [
+      "Design memorable positive peak moments",
+      "End experiences on a high note with celebration or success",
+      "Focus on making critical moments delightful",
+      "Provide satisfying completion states"
+    ],
+    "dont": [
+      "End experiences with frustration or confusion",
+      "Make the most intensive moments negative",
+      "Ignore the emotional journey of user interactions",
+      "Focus only on efficiency without considering feelings"
+    ],
+    "example": {
+      "image": "peak-end-rule.png",
+      "caption": "Uber's trip completion shows route summary and easy rating (positive ending)"
+    },
+    "tags": ["emotion", "experience-design", "memorable-moments", "satisfaction"],
+    "category": "memory",
+    "sources": ["https://lawsofux.com/peak-end-rule/"]
+  },
+  {
+    "id": "von-restorff-effect",
+    "type": "ux_law",
+    "title": "Von Restorff Effect",
+    "oneLiner": "Different things stand out and are remembered better",
+    "definition": "Also known as the isolation effect, items that stand out from their surroundings are more likely to be remembered. Visual distinctiveness helps important elements capture attention and improve recall.",
+    "appliesWhen": ["call-to-action buttons", "error states", "important notifications", "key features"],
+    "do": [
+      "Make primary actions visually distinct from secondary ones",
+      "Use color, size, or typography to highlight key information",
+      "Ensure important buttons stand out from the background",
+      "Create visual hierarchy through contrast"
+    ],
+    "dont": [
+      "Make everything look the same without hierarchy",
+      "Overuse highlighting, making everything compete for attention",
+      "Hide important actions with low contrast",
+      "Use distinctiveness for unimportant elements"
+    ],
+    "example": {
+      "image": "von-restorff-effect.png",
+      "caption": "Spotify's green 'Play' button stands out distinctly from other interface elements"
+    },
+    "tags": ["visual-hierarchy", "contrast", "attention", "memorability"],
+    "category": "attention",
+    "sources": ["https://lawsofux.com/von-restorff-effect/"]
+  },
+  {
+    "id": "confirmation-bias",
+    "type": "cognitive_bias",
+    "title": "Confirmation Bias",
+    "oneLiner": "People seek information that confirms their existing beliefs",
+    "definition": "The tendency to search for, interpret, and recall information that confirms pre-existing beliefs while ignoring contradictory evidence. Users approach interfaces with preconceptions about how things should work.",
+    "appliesWhen": ["user research", "feature design", "content presentation", "navigation patterns"],
+    "do": [
+      "Present information objectively and clearly",
+      "Test designs with diverse user groups",
+      "Challenge your own assumptions during design",
+      "Provide multiple perspectives on complex topics"
+    ],
+    "dont": [
+      "Design based solely on your own preferences",
+      "Ignore user feedback that contradicts expectations",
+      "Present only information that supports your narrative",
+      "Skip user testing with different demographic groups"
+    ],
+    "example": {
+      "image": "confirmation-bias.png",
+      "caption": "News apps often create filter bubbles by showing content similar to past reads"
+    },
+    "tags": ["research", "testing", "assumptions", "objectivity"],
+    "category": "decisions",
+    "sources": ["https://www.interaction-design.org/literature/article/confirmation-bias-cognitive-bias"]
+  },
+  {
+    "id": "anchoring-bias",
+    "type": "cognitive_bias",
+    "title": "Anchoring Bias",
+    "oneLiner": "First impressions heavily influence all subsequent judgments",
+    "definition": "People rely heavily on the first piece of information encountered (the 'anchor') when making decisions. This initial information serves as a reference point for all subsequent judgments, even when it's irrelevant.",
+    "appliesWhen": ["pricing displays", "product comparisons", "onboarding flows", "first impressions"],
+    "do": [
+      "Lead with your strongest value proposition",
+      "Show higher-value options first in pricing",
+      "Create positive first impressions with polished onboarding",
+      "Use anchoring strategically in product presentations"
+    ],
+    "dont": [
+      "Start with negative or confusing experiences",
+      "Hide the most attractive options behind less appealing ones",
+      "Create poor first impressions that are hard to overcome",
+      "Ignore the power of initial positioning"
+    ],
+    "example": {
+      "image": "anchoring-bias.png",
+      "caption": "SaaS pricing pages often show the premium plan first to anchor expectations high"
+    },
+    "tags": ["pricing", "first-impressions", "positioning", "decision-making"],
+    "category": "decisions",
+    "sources": ["https://thedecisionlab.com/biases/anchoring-bias"]
+  },
+  {
+    "id": "loss-aversion",
+    "type": "cognitive_bias",
+    "title": "Loss Aversion",
+    "oneLiner": "People fear losing something more than gaining equivalent value",
+    "definition": "The psychological principle that people feel the pain of losing something twice as strongly as the pleasure of gaining the same thing. Users are more motivated to avoid losses than to acquire gains of equal value.",
+    "appliesWhen": ["subscription cancellation", "feature removal", "data deletion", "account changes"],
+    "do": [
+      "Frame benefits in terms of what users will lose without them",
+      "Provide clear warnings before destructive actions",
+      "Offer to save or backup important user data",
+      "Emphasize existing investments when preventing churn"
+    ],
+    "dont": [
+      "Delete user data without clear warnings",
+      "Remove features without explaining alternatives",
+      "Make it easy to accidentally lose progress or content",
+      "Focus only on gains without acknowledging potential losses"
+    ],
+    "example": {
+      "image": "loss-aversion.png",
+      "caption": "Spotify shows 'You'll lose your playlists' when users try to downgrade"
+    },
+    "tags": ["motivation", "warnings", "retention", "psychology"],
+    "category": "decisions",
+    "sources": ["https://www.behavioraleconomics.com/resources/mini-encyclopedia-of-be/loss-aversion/"]
+  },
+  {
+    "id": "choice-overload",
+    "type": "cognitive_bias",
+    "title": "Choice Overload",
+    "oneLiner": "Too many options can paralyze decision-making",
+    "definition": "When faced with too many choices, people often experience decision paralysis, make poorer choices, or avoid deciding altogether. The paradox of choice suggests that while some choice is good, too much choice can be overwhelming.",
+    "appliesWhen": ["product catalogs", "menu design", "customization options", "feature selection"],
+    "do": [
+      "Curate and limit options to the most relevant ones",
+      "Provide smart defaults and recommendations",
+      "Use progressive disclosure to reveal options gradually",
+      "Group similar options into clear categories"
+    ],
+    "dont": [
+      "Present hundreds of options without filtering",
+      "Make users configure everything from scratch",
+      "Offer choices without guidance or recommendations",
+      "Create equally prominent options for all features"
+    ],
+    "example": {
+      "image": "choice-overload.png",
+      "caption": "Apple offers just a few iPhone models instead of dozens of configurations"
+    },
+    "tags": ["simplification", "curation", "decision-making", "cognitive-load"],
+    "category": "decisions",
+    "sources": ["https://www.nngroup.com/articles/tyranny-of-small-decisions/"]
+  },
+  {
+    "id": "availability-heuristic",
+    "type": "cognitive_bias",
+    "title": "Availability Heuristic",
+    "oneLiner": "People judge likelihood by how easily examples come to mind",
+    "definition": "People estimate the probability or frequency of an event based on how easily they can recall similar instances. Recent, memorable, or frequently encountered examples seem more likely to occur than they actually are.",
+    "appliesWhen": ["error messaging", "risk communication", "feature promotion", "user expectations"],
+    "do": [
+      "Provide concrete examples to illustrate abstract concepts",
+      "Use familiar analogies to explain new features",
+      "Make important information memorable and accessible",
+      "Share relevant case studies and success stories"
+    ],
+    "dont": [
+      "Rely on users to imagine abstract scenarios",
+      "Assume users understand risks without examples",
+      "Hide important information that should be easily recalled",
+      "Use only statistical data without concrete examples"
+    ],
+    "example": {
+      "image": "availability-heuristic.png",
+      "caption": "Password managers show recent data breaches to motivate security improvements"
+    },
+    "tags": ["mental-models", "examples", "risk-perception", "communication"],
+    "category": "decisions",
+    "sources": ["https://thedecisionlab.com/biases/availability-heuristic"]
+  },
+  {
+    "id": "dunning-kruger-effect",
+    "type": "cognitive_bias",
+    "title": "Dunning-Kruger Effect",
+    "oneLiner": "People with low ability overestimate their competence",
+    "definition": "Individuals with limited knowledge or competence in a domain overestimate their own knowledge or competence in that domain. This affects how users perceive their skill level and their willingness to seek help or follow guidance.",
+    "appliesWhen": ["help systems", "onboarding design", "expert vs novice modes", "progressive disclosure"],
+    "do": [
+      "Provide progressive learning paths for complex features",
+      "Offer both beginner and advanced modes",
+      "Make help and tutorials easily accessible",
+      "Guide users through complex tasks step-by-step"
+    ],
+    "dont": [
+      "Assume all users know their actual skill level",
+      "Hide help systems or make them hard to find",
+      "Design only for expert users",
+      "Skip educational content for complex features"
+    ],
+    "example": {
+      "image": "dunning-kruger-effect.png",
+      "caption": "Adobe products offer both simple and advanced modes for different skill levels"
+    },
+    "tags": ["skill-levels", "help-systems", "learning", "self-assessment"],
+    "category": "decisions",
+    "sources": ["https://www.verywellmind.com/an-overview-of-the-dunning-kruger-effect-4160740"]
+  },
+  {
+    "id": "sunk-cost-fallacy",
+    "type": "cognitive_bias",
+    "title": "Sunk Cost Fallacy",
+    "oneLiner": "People continue bad decisions because they've already invested",
+    "definition": "The tendency to continue investing in a losing proposition because of previously invested resources (time, money, or effort). Users may stick with poor solutions simply because they've already put effort into them.",
+    "appliesWhen": ["account migration", "workflow changes", "feature deprecation", "platform switching"],
+    "do": [
+      "Acknowledge users' previous investments when proposing changes",
+      "Provide migration tools and clear transition paths",
+      "Explain future benefits that outweigh past investments",
+      "Make new solutions clearly superior to old ones"
+    ],
+    "dont": [
+      "Ignore the effort users have put into current workflows",
+      "Make switching costly or complicated",
+      "Dismiss existing solutions without showing better alternatives",
+      "Force changes without explaining long-term benefits"
+    ],
+    "example": {
+      "image": "sunk-cost-fallacy.png",
+      "caption": "Google provided clear migration tools when shutting down Google Reader"
+    },
+    "tags": ["change-management", "migration", "investment", "decision-making"],
+    "category": "decisions",
+    "sources": ["https://thedecisionlab.com/biases/the-sunk-cost-fallacy"]
+  },
+  {
+    "id": "recognition-over-recall",
+    "type": "heuristic",
+    "title": "Recognition over Recall",
+    "oneLiner": "It's easier to recognize things than to remember them",
+    "definition": "Human memory is better at recognizing previously encountered items than recalling them from scratch. Users find it easier to choose from a list of options than to generate answers from memory.",
+    "appliesWhen": ["search interfaces", "form design", "navigation menus", "command interfaces"],
+    "do": [
+      "Provide dropdown menus instead of requiring typed input",
+      "Show recently used items or suggestions",
+      "Use autocomplete and search suggestions",
+      "Display available options clearly"
+    ],
+    "dont": [
+      "Force users to remember exact commands or syntax",
+      "Hide available options behind unclear labels",
+      "Require users to recall precise formatting",
+      "Make users guess what inputs are acceptable"
+    ],
+    "example": {
+      "image": "recognition-over-recall.png",
+      "caption": "Google's search suggestions help users recognize what they're looking for"
+    },
+    "tags": ["memory", "usability", "interface-design", "cognitive-ease"],
+    "category": "memory",
+    "sources": ["https://www.nngroup.com/articles/recognition-and-recall/"]
+  },
+  {
+    "id": "consistency-standards",
+    "type": "heuristic",
+    "title": "Consistency & Standards",
+    "oneLiner": "Similar things should look and behave the same way",
+    "definition": "Users should not have to wonder whether different words, situations, or actions mean the same thing. Consistency within your product and adherence to platform conventions reduces cognitive load and improves usability.",
+    "appliesWhen": ["design systems", "interaction patterns", "terminology", "visual elements"],
+    "do": [
+      "Use consistent terminology throughout your product",
+      "Apply the same interaction patterns for similar actions",
+      "Follow platform-specific design guidelines",
+      "Maintain visual consistency across all screens"
+    ],
+    "dont": [
+      "Use different words for the same concept",
+      "Change interaction patterns arbitrarily between screens",
+      "Ignore platform conventions without good reason",
+      "Create inconsistent visual treatments for similar elements"
+    ],
+    "example": {
+      "image": "consistency-standards.png",
+      "caption": "iOS apps consistently use swipe-right for 'back' navigation"
+    },
+    "tags": ["consistency", "standards", "patterns", "predictability"],
+    "category": "usability",
+    "sources": ["https://www.nngroup.com/articles/ten-usability-heuristics/"]
+  },
+  {
+    "id": "error-prevention",
+    "type": "heuristic",
+    "title": "Error Prevention",
+    "oneLiner": "Prevent problems before they occur",
+    "definition": "Good design prevents users from making errors in the first place. This involves eliminating error-prone conditions, asking for confirmation of destructive actions, and providing constraints that guide users toward correct choices.",
+    "appliesWhen": ["form validation", "destructive actions", "data entry", "critical workflows"],
+    "do": [
+      "Validate inputs in real-time as users type",
+      "Ask for confirmation before destructive actions",
+      "Provide clear constraints and formatting examples",
+      "Disable buttons that would cause errors"
+    ],
+    "dont": [
+      "Wait until form submission to show validation errors",
+      "Allow destructive actions without warning",
+      "Accept clearly invalid input without guidance",
+      "Make it easy to accidentally trigger critical actions"
+    ],
+    "example": {
+      "image": "error-prevention.png",
+      "caption": "Gmail asks 'Send anyway?' when you mention 'attachment' but haven't attached anything"
+    },
+    "tags": ["validation", "safety", "prevention", "user-protection"],
+    "category": "usability",
+    "sources": ["https://www.nngroup.com/articles/slips/"]
+  }
+]

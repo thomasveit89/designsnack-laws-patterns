@@ -1,7 +1,69 @@
-import { MMKV } from 'react-native-mmkv';
+import AsyncStorage from '@react-native-async-storage/async-storage';
 
-// Initialize MMKV storage
-const storage = new MMKV();
+// Storage interface that works with both MMKV and AsyncStorage
+interface StorageInterface {
+  getString(key: string): string | null;
+  set(key: string, value: string): void;
+  delete(key: string): void;
+  clearAll(): void;
+}
+
+// AsyncStorage wrapper to match MMKV interface
+class AsyncStorageWrapper implements StorageInterface {
+  private cache = new Map<string, string>();
+
+  getString(key: string): string | null {
+    // Return from cache if available (synchronous)
+    if (this.cache.has(key)) {
+      return this.cache.get(key) || null;
+    }
+    
+    // Load asynchronously and cache for next time
+    AsyncStorage.getItem(key).then(value => {
+      if (value) {
+        this.cache.set(key, value);
+      }
+    }).catch(() => {});
+    
+    return null;
+  }
+
+  set(key: string, value: string): void {
+    this.cache.set(key, value);
+    AsyncStorage.setItem(key, value).catch(() => {});
+  }
+
+  delete(key: string): void {
+    this.cache.delete(key);
+    AsyncStorage.removeItem(key).catch(() => {});
+  }
+
+  clearAll(): void {
+    this.cache.clear();
+    AsyncStorage.clear().catch(() => {});
+  }
+
+  // Initialize cache from AsyncStorage
+  async initialize(): Promise<void> {
+    try {
+      const keys = await AsyncStorage.getAllKeys();
+      const items = await AsyncStorage.multiGet(keys);
+      items.forEach(([key, value]) => {
+        if (value) {
+          this.cache.set(key, value);
+        }
+      });
+    } catch (error) {
+      console.warn('Failed to initialize storage cache:', error);
+    }
+  }
+}
+
+// Use AsyncStorage for Expo Go compatibility
+const storage = new AsyncStorageWrapper();
+
+// Initialize storage cache
+storage.initialize();
 
 // Storage keys
 export const STORAGE_KEYS = {

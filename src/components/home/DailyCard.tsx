@@ -32,10 +32,10 @@ export function DailyCard({
       {/* Header */}
       <View className="flex-row items-start justify-between mb-4">
         <View className="flex-1 mr-4">
-          <Text className="text-sm font-medium text-gray-500 mb-1">
+          <Text className="text-base font-medium text-gray-500 mb-2">
             Today's Law
           </Text>
-          <Text className="text-xl font-bold text-gray-900 leading-tight">
+          <Text className="text-2xl font-bold text-gray-900 leading-tight">
             {principle.title}
           </Text>
         </View>
@@ -47,41 +47,41 @@ export function DailyCard({
 
       {/* Type and Category */}
       <View className="flex-row items-center gap-2 mb-4">
-        <View className="bg-brand-primary/10 px-3 py-1 rounded-full">
+        <View className="bg-brand-primary/10 px-3 py-1.5 rounded-full">
           <Text className="text-sm font-medium text-brand-primary">
             {getTypeLabel(principle.type)}
           </Text>
         </View>
         <CategoryChip 
           category={principle.category}
-          size="sm"
+          size="md"
         />
       </View>
 
       {/* Emoji Illustration */}
-      <View className="items-center justify-center py-6">
+      <View className="items-start justify-start py-6">
         <Text className="text-6xl mb-2">
           {emoji}
         </Text>
-        <Text className="text-2xl font-semibold text-gray-900 text-center mb-2">
+        <Text className="text-3xl font-semibold text-gray-900 text-left mb-2">
           {principle.oneLiner}
         </Text>
       </View>
 
       {/* Definition */}
-      <Text className="text-base text-gray-600 leading-relaxed mb-6">
+      <Text className="text-lg text-gray-600 leading-relaxed mb-6">
         {principle.definition}
       </Text>
 
       {/* Quick Tips */}
       {principle.do.length > 0 && (
         <View className="mb-6">
-          <Text className="text-sm font-semibold text-gray-900 mb-2">
+          <Text className="text-base font-semibold text-gray-900 mb-3">
             ✅ Quick Do's:
           </Text>
           <View className="space-y-1">
             {principle.do.slice(0, 2).map((item, index) => (
-              <Text key={index} className="text-sm text-gray-600">
+              <Text key={index} className="text-base text-gray-600">
                 • {item}
               </Text>
             ))}

@@ -32,7 +32,6 @@ export function FavoriteButton({
       onPress={handleToggle}
       className={cn(
         'items-center justify-center rounded-full',
-        'active:scale-95 transition-transform',
         favorited ? 'bg-yellow-50' : 'bg-gray-50',
         sizeStyles[size],
         className

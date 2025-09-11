@@ -64,50 +64,13 @@ export default function HomeScreen() {
       <ScrollView 
         className="flex-1"
         showsVerticalScrollIndicator={false}
-        contentContainerStyle={{ paddingBottom: 32 }}
+        contentContainerStyle={{ paddingBottom: 32, paddingTop: 16 }}
       >
-        {/* Header */}
-        <View className="pt-4 pb-6 px-6">
-          <Text className="text-3xl font-bold text-brand-primary mb-1">
-            DESIGNSNACK
-          </Text>
-          <Text className="text-lg text-gray-600 mb-2">
-            Laws & Patterns
-          </Text>
-          <Text className="text-sm text-gray-500">
-            {formatDate(today, 'long')}
-          </Text>
-        </View>
-
         {/* Daily Principle Card */}
         <DailyCard 
           principle={todaysPrinciple}
           onLearnMore={handleLearnMore}
-          className="mb-6"
         />
-
-        {/* Quick Stats */}
-        <View className="mx-6 bg-white rounded-xl p-4 border border-gray-100">
-          <Text className="text-base font-semibold text-gray-900 mb-2">
-            Your Progress
-          </Text>
-          <View className="flex-row justify-between">
-            <View className="items-center">
-              <Text className="text-2xl font-bold text-brand-primary">
-                {useFavorites.getState().getFavoriteCount()}
-              </Text>
-              <Text className="text-sm text-gray-600">Favorites</Text>
-            </View>
-            <View className="items-center">
-              <Text className="text-2xl font-bold text-green-500">20</Text>
-              <Text className="text-sm text-gray-600">Principles</Text>
-            </View>
-            <View className="items-center">
-              <Text className="text-2xl font-bold text-purple-500">4</Text>
-              <Text className="text-sm text-gray-600">Categories</Text>
-            </View>
-          </View>
-        </View>
       </ScrollView>
     </SafeAreaView>
   );

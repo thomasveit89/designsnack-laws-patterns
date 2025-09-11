@@ -1,5 +1,5 @@
 import React from 'react';
-import { View, Text } from 'react-native';
+import { View, Text, TouchableOpacity } from 'react-native';
 import { CATEGORY_COLORS } from '../../lib/image-placeholders';
 import { cn } from '../../lib/utils';
 
@@ -7,12 +7,14 @@ interface CategoryChipProps {
   category: string;
   size?: 'sm' | 'md';
   className?: string;
+  onPress?: () => void;
 }
 
 export function CategoryChip({ 
   category, 
   size = 'md',
-  className 
+  className,
+  onPress
 }: CategoryChipProps) {
   const color = CATEGORY_COLORS[category as keyof typeof CATEGORY_COLORS] || '#64748B';
   
@@ -26,14 +28,19 @@ export function CategoryChip({
     md: 'text-sm'
   };
 
+  const ChipComponent = onPress ? TouchableOpacity : View;
+
   return (
-    <View 
+    <ChipComponent 
+      onPress={onPress}
       className={cn(
         'rounded-full items-center justify-center',
         sizeStyles[size],
+        onPress && 'active:opacity-70',
         className
       )}
       style={{ backgroundColor: `${color}15` }} // 15% opacity
+      activeOpacity={0.7}
     >
       <Text 
         className={cn(
@@ -44,6 +51,6 @@ export function CategoryChip({
       >
         {category}
       </Text>
-    </View>
+    </ChipComponent>
   );
 }

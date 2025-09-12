@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, forwardRef } from 'react';
 import { View, Text, TouchableOpacity } from 'react-native';
 import Animated, { 
   useSharedValue, 
@@ -18,7 +18,7 @@ interface FlashCardProps {
   className?: string;
 }
 
-export function FlashCard({ principle, className }: FlashCardProps) {
+export const FlashCard = forwardRef<View, FlashCardProps>(({ principle, className }, ref) => {
   const [isFlipped, setIsFlipped] = useState(false);
   const flipAnimation = useSharedValue(0);
   const emoji = getPrincipleImage(principle.id);
@@ -59,6 +59,7 @@ export function FlashCard({ principle, className }: FlashCardProps) {
 
   return (
     <TouchableOpacity 
+      ref={ref}
       onPress={handleFlip}
       activeOpacity={0.9}
       className={`relative ${className}`}
@@ -158,4 +159,4 @@ export function FlashCard({ principle, className }: FlashCardProps) {
       <View className="bg-transparent rounded-2xl p-6 min-h-[500]" />
     </TouchableOpacity>
   );
-}
+});

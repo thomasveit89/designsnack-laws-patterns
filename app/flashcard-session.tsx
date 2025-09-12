@@ -92,7 +92,7 @@ export default function FlashcardSessionScreen() {
           {/* Progress Bar */}
           <View className="bg-gray-200 rounded-full h-2">
             <View 
-              className="bg-brand-primary rounded-full h-2 transition-all duration-300"
+              className="bg-brand-primary rounded-full h-2"
               style={{ width: `${progress}%` }}
             />
           </View>

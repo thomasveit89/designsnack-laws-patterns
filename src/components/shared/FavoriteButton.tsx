@@ -14,8 +14,8 @@ export function FavoriteButton({
   size = 'md',
   className 
 }: FavoriteButtonProps) {
-  const { isFavorite, toggleFavorite } = useFavorites();
-  const favorited = isFavorite(principleId);
+  const { favorites, toggleFavorite } = useFavorites();
+  const favorited = favorites.has(principleId);
 
   const handleToggle = () => {
     toggleFavorite(principleId);

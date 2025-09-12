@@ -158,6 +158,7 @@ export default function FlashcardSessionScreen() {
             )}
           </View>
         </View>
+      </View>
       </SafeAreaView>
     </>
   );

@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
-import { View, Text } from 'react-native';
+import { View, Text, TouchableOpacity } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
-import { useRouter, useLocalSearchParams } from 'expo-router';
+import { useRouter, useLocalSearchParams, Stack } from 'expo-router';
 import { Button } from '@/src/components/ui/Button';
 import { FlashCard } from '@/src/components/quiz/FlashCard';
 import { usePrinciples } from '@/src/store/usePrinciples';
@@ -74,32 +74,34 @@ export default function FlashcardSessionScreen() {
   const progress = ((currentIndex + 1) / sessionPrinciples.length) * 100;
 
   return (
-    <SafeAreaView className="flex-1 bg-gray-50" edges={[]}>
-      {/* Custom Header with Status Bar */}
-      <View className="bg-white border-b border-gray-100">
-        {/* Status Bar Area with Progress */}
-        <View className="pt-12 pb-2">
-          <Text className="text-center text-base font-medium text-gray-600">
-            {currentIndex + 1} of {sessionPrinciples.length}
-          </Text>
-        </View>
-        
-        {/* Header Controls */}
-        <View className="px-6 pb-4">
-          <View className="flex-row items-center justify-between mb-3">
-            <Button
-              variant="ghost"
-              size="sm"
-              onPress={handleFinish}
-              className="w-auto"
-            >
-              ← Back
-            </Button>
-            <Text className="text-lg font-bold text-gray-900">
-              Study Session
+    <>
+      <Stack.Screen options={{ headerShown: false }} />
+      <SafeAreaView className="flex-1 bg-gray-50" edges={[]}>
+        {/* Custom Header with Status Bar */}
+        <View className="bg-white border-b border-gray-100">
+          {/* Status Bar Area with Progress */}
+          <View className="pt-12 pb-2">
+            <Text className="text-center text-base font-medium text-gray-600">
+              {currentIndex + 1} of {sessionPrinciples.length}
             </Text>
-            <View className="w-16" />
           </View>
+          
+          {/* Header Controls */}
+          <View className="px-6 pb-4">
+            <View className="flex-row items-center justify-between mb-3">
+              <TouchableOpacity 
+                onPress={handleFinish}
+                className="flex-row items-center"
+              >
+                <Text className="text-brand-primary text-base font-medium">
+                  ← Back
+                </Text>
+              </TouchableOpacity>
+              <Text className="text-lg font-bold text-gray-900">
+                Study Session
+              </Text>
+              <View className="w-16" />
+            </View>
           
           {/* Progress Bar */}
           <View className="bg-gray-200 rounded-full h-2">
@@ -156,7 +158,7 @@ export default function FlashcardSessionScreen() {
             )}
           </View>
         </View>
-      </View>
-    </SafeAreaView>
+      </SafeAreaView>
+    </>
   );
 }

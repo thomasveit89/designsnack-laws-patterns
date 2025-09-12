@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
-import { Text, View } from 'react-native';
+import { Text, View, TouchableOpacity } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
-import { useRouter } from 'expo-router';
+import { useRouter, Stack } from 'expo-router';
 import { Button } from '@/src/components/ui/Button';
 import { usePrinciples } from '@/src/store/usePrinciples';
 import { useFavorites } from '@/src/store/useFavorites';
@@ -30,23 +30,28 @@ export default function FlashcardsScreen() {
   const studyCount = selectedMode === 'all' ? principleCount : favoriteCount;
 
   return (
-    <SafeAreaView className="flex-1 bg-gray-50" edges={['top']}>
-      <View className="flex-1 px-6 py-6">
+    <>
+      <Stack.Screen options={{ headerShown: false }} />
+      <SafeAreaView className="flex-1 bg-gray-50">
         {/* Header */}
-        <View className="flex-row items-center justify-between mb-8">
-          <Button
-            variant="ghost"
-            size="sm"
+        <View className="flex-row items-center justify-between px-6 py-4 bg-white border-b border-gray-100">
+          <TouchableOpacity 
             onPress={handleBack}
-            className="w-auto"
+            className="flex-row items-center"
           >
-            ← Back
-          </Button>
-          <Text className="text-xl font-bold text-gray-900">
+            <Text className="text-brand-primary text-base font-medium">
+              ← Back
+            </Text>
+          </TouchableOpacity>
+          
+          <Text className="text-lg font-semibold text-gray-900">
             Flashcards
           </Text>
-          <View className="w-16" />
+          
+          <View className="w-12" />
         </View>
+
+        <View className="flex-1 px-6 py-6">
 
         {/* Study Mode Selection */}
         <View className="mb-8">
@@ -97,7 +102,7 @@ export default function FlashcardsScreen() {
             Start Studying {studyCount > 0 && `(${studyCount} cards)`}
           </Button>
         </View>
-      </View>
-    </SafeAreaView>
+      </SafeAreaView>
+    </>
   );
 }

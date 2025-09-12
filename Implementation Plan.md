@@ -117,8 +117,6 @@
 ### 4.3 List Interactions 🔄
 - [x] Favorite toggle in list items
 - [x] Smooth navigation to detail screens
-- [ ] Pull-to-refresh (optional)
-- [ ] Proper VoiceOver support
 
 **🔄 Deliverable Status:** Discoverable library working, accessibility improvements needed
 
@@ -143,8 +141,6 @@
 - [x] Smooth back navigation
 - [x] Proper content scrolling
 - [x] Navigation from library and daily cards
-- [ ] Native share functionality (formatted text)
-- [ ] Last-read persistence
 
 ### 5.3 Polish & Accessibility
 - [x] Proper safe area handling
@@ -152,8 +148,6 @@
 - [x] Visual selection indicators for category pills
 - [x] Fixed emoji text clipping issues
 - [x] Optimized bottom spacing for tab bar
-- [ ] Dynamic Type support
-- [ ] VoiceOver labels and navigation order
 
 **✅ Deliverable Achieved:** Information-rich detail screens with excellent UX
 

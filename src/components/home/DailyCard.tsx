@@ -60,7 +60,10 @@ export function DailyCard({
 
       {/* Emoji Illustration */}
       <View className="items-start justify-start py-6">
-        <Text className="text-6xl mb-2">
+        <Text 
+          className="text-6xl mb-2"
+          style={{ lineHeight: 72, includeFontPadding: false }}
+        >
           {emoji}
         </Text>
         <Text className="text-3xl font-semibold text-gray-900 text-left mb-2">

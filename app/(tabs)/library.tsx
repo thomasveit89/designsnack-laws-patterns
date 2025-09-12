@@ -6,14 +6,16 @@ import { PrincipleListCard } from '@/src/components/library/PrincipleListCard';
 import { SearchInput } from '@/src/components/ui/SearchInput';
 import { CategoryChip } from '@/src/components/shared/CategoryChip';
 import { usePrinciples } from '@/src/store/usePrinciples';
+import { useFavorites } from '@/src/store/useFavorites';
 import { Principle } from '@/src/data/types';
 import categoriesData from '@/src/data/categories.json';
 
 type SortOption = 'alphabetical' | 'category' | 'favorites';
-type CategoryFilter = 'all' | string;
+type CategoryFilter = 'all' | 'favorites' | string;
 
 export default function LibraryScreen() {
   const { principles, loadPrinciples } = usePrinciples();
+  const { loadFavorites, getFavoriteIds, getFavoriteCount } = useFavorites();
   const [searchQuery, setSearchQuery] = useState('');
   const [categoryFilter, setCategoryFilter] = useState<CategoryFilter>('all');
   const [sortBy, setSortBy] = useState<SortOption>('alphabetical');
@@ -22,7 +24,8 @@ export default function LibraryScreen() {
 
   useEffect(() => {
     loadPrinciples();
-  }, [loadPrinciples]);
+    loadFavorites();
+  }, [loadPrinciples, loadFavorites]);
 
   // Filter and search principles
   const filteredPrinciples = useMemo(() => {
@@ -41,16 +44,22 @@ export default function LibraryScreen() {
 
     // Apply category filter
     if (categoryFilter !== 'all') {
-      // Map display labels to actual category values
-      const categoryMap: Record<string, string> = {
-        'Attention': 'attention',
-        'Memory': 'memory', 
-        'Decision Making': 'decisions',
-        'Usability': 'usability'
-      };
-      const actualCategory = categoryMap[categoryFilter];
-      if (actualCategory) {
-        filtered = filtered.filter(principle => principle.category === actualCategory);
+      if (categoryFilter === 'favorites') {
+        // Filter by favorites
+        const favoriteIds = getFavoriteIds();
+        filtered = filtered.filter(principle => favoriteIds.includes(principle.id));
+      } else {
+        // Map display labels to actual category values
+        const categoryMap: Record<string, string> = {
+          'Attention': 'attention',
+          'Memory': 'memory', 
+          'Decision Making': 'decisions',
+          'Usability': 'usability'
+        };
+        const actualCategory = categoryMap[categoryFilter];
+        if (actualCategory) {
+          filtered = filtered.filter(principle => principle.category === actualCategory);
+        }
       }
     }
 
@@ -69,7 +78,7 @@ export default function LibraryScreen() {
     }
 
     return filtered;
-  }, [principles, searchQuery, categoryFilter, sortBy]);
+  }, [principles, searchQuery, categoryFilter, sortBy, getFavoriteIds]);
 
   const handlePrinciplePress = (principle: Principle) => {
     router.push(`/principle/${principle.id}`);
@@ -113,6 +122,12 @@ export default function LibraryScreen() {
               selected={categoryFilter === 'all'}
               onPress={() => setCategoryFilter('all')}
             />
+            <CategoryChip 
+              category={getFavoriteCount() > 0 ? `Favorites (${getFavoriteCount()})` : 'Favorites'}
+              size="md"
+              selected={categoryFilter === 'favorites'}
+              onPress={() => setCategoryFilter('favorites')}
+            />
             {categoriesData.map((category) => (
               <CategoryChip 
                 key={category.id}
@@ -131,7 +146,8 @@ export default function LibraryScreen() {
         <Text className="text-sm text-gray-500">
           {filteredPrinciples.length} principle{filteredPrinciples.length !== 1 ? 's' : ''}
           {searchQuery && ` matching "${searchQuery}"`}
-          {categoryFilter !== 'all' && ` in ${categoryFilter}`}
+          {categoryFilter === 'favorites' && ` in Favorites`}
+          {categoryFilter !== 'all' && categoryFilter !== 'favorites' && ` in ${categoryFilter}`}
         </Text>
       </View>
 
@@ -147,12 +163,16 @@ export default function LibraryScreen() {
         }}
         ListEmptyComponent={
           <View className="items-center justify-center py-12">
-            <Text className="text-xl text-gray-400 mb-2">🔍</Text>
+            <Text className="text-xl text-gray-400 mb-2">
+              {categoryFilter === 'favorites' ? '⭐' : '🔍'}
+            </Text>
             <Text className="text-lg font-medium text-gray-600 mb-1">
-              No principles found
+              {categoryFilter === 'favorites' ? 'No favorites yet' : 'No principles found'}
             </Text>
             <Text className="text-base text-gray-500 text-center">
-              Try adjusting your search or filters
+              {categoryFilter === 'favorites' 
+                ? 'Tap the star icon on principles to add them to your favorites' 
+                : 'Try adjusting your search or filters'}
             </Text>
           </View>
         }

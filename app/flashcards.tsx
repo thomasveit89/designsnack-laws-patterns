@@ -102,6 +102,7 @@ export default function FlashcardsScreen() {
             Start Studying {studyCount > 0 && `(${studyCount} cards)`}
           </Button>
         </View>
+        </View>
       </SafeAreaView>
     </>
   );

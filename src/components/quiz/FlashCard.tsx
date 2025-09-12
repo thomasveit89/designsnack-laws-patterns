@@ -24,13 +24,13 @@ export const FlashCard = forwardRef<View, FlashCardProps>(({ principle, classNam
   const flipAnimation = useSharedValue(0);
   const emoji = getPrincipleImage(principle.id);
 
-  // Reset card to front when resetTrigger changes
+  // Reset card to front when resetTrigger changes (but only if we're navigating)
   useEffect(() => {
-    if (resetTrigger !== undefined && isFlipped) {
+    if (resetTrigger !== undefined) {
       setIsFlipped(false);
-      flipAnimation.value = withTiming(0, { duration: 0 });
+      flipAnimation.value = 0;
     }
-  }, [resetTrigger, isFlipped, flipAnimation]);
+  }, [resetTrigger, flipAnimation]);
 
   const handleFlip = () => {
     // Haptic feedback

@@ -13,7 +13,7 @@ export default function FlashcardSessionScreen() {
   const { mode } = useLocalSearchParams<{ mode: 'all' | 'favorites' }>();
   const { principles } = usePrinciples();
   const { getFavoriteIds } = useFavorites();
-  
+
   const [currentIndex, setCurrentIndex] = useState(0);
   const [sessionPrinciples, setSessionPrinciples] = useState<Principle[]>([]);
   const [cardResetTrigger, setCardResetTrigger] = useState(0);
@@ -21,12 +21,12 @@ export default function FlashcardSessionScreen() {
   useEffect(() => {
     // Filter principles based on mode
     let filtered = [...principles];
-    
+
     if (mode === 'favorites') {
       const favoriteIds = getFavoriteIds();
       filtered = principles.filter(p => favoriteIds.includes(p.id));
     }
-    
+
     // Shuffle the principles for varied study experience
     const shuffled = [...filtered].sort(() => Math.random() - 0.5);
     setSessionPrinciples(shuffled);
@@ -58,7 +58,7 @@ export default function FlashcardSessionScreen() {
             No principles to study
           </Text>
           <Text className="text-base text-gray-600 text-center mb-6">
-            {mode === 'favorites' 
+            {mode === 'favorites'
               ? 'You don\'t have any favorites yet. Go favorite some principles first!'
               : 'No principles available to study.'}
           </Text>
@@ -77,88 +77,90 @@ export default function FlashcardSessionScreen() {
     <>
       <Stack.Screen options={{ headerShown: false }} />
       <SafeAreaView className="flex-1 bg-gray-50" edges={[]}>
-        {/* Custom Header with Status Bar */}
+        {/* Custom Header */}
         <View className="bg-white border-b border-gray-100">
-          {/* Status Bar Area with Progress */}
+          {/* Status Bar Area */}
           <View className="pt-12 pb-2">
-            <Text className="text-center text-base font-medium text-gray-600">
-              {currentIndex + 1} of {sessionPrinciples.length}
-            </Text>
+            <View className="h-6" />
           </View>
-          
+
           {/* Header Controls */}
           <View className="px-6 pb-4">
-            <View className="flex-row items-center justify-between mb-3">
-              <TouchableOpacity 
+            <View className="flex-row items-center justify-between">
+              <TouchableOpacity
                 onPress={handleFinish}
                 className="flex-row items-center"
               >
-                <Text className="text-brand-primary text-base font-medium">
-                  ← Back
-                </Text>
+                <Text className="text-2xl mr-2">←</Text>
+                <Text className="text-lg font-medium text-gray-700">Back</Text>
               </TouchableOpacity>
               <Text className="text-lg font-bold text-gray-900">
                 Study Session
               </Text>
               <View className="w-16" />
             </View>
-          
-          {/* Progress Bar */}
+          </View>
+        </View>
+
+        {/* Progress Section */}
+        <View className="bg-white px-6 py-4 border-b border-gray-100">
+          <Text className="text-center text-base font-medium text-gray-600 mb-3">
+            {currentIndex + 1} of {sessionPrinciples.length}
+          </Text>
           <View className="bg-gray-200 rounded-full h-2">
-            <View 
+            <View
               className="bg-brand-primary rounded-full h-2"
               style={{ width: `${progress}%` }}
             />
           </View>
         </View>
-      </View>
-      
-      <View className="flex-1">
 
-        {/* Flashcard */}
-        <View className="flex-1 px-6 py-6">
-          <FlashCard 
-            principle={currentPrinciple}
-            className="flex-1"
-            resetTrigger={cardResetTrigger}
-          />
-        </View>
+        <View className="flex-1">
 
-        {/* Navigation */}
-        <View className="px-6 py-4 bg-white border-t border-gray-100" style={{ paddingBottom: 34 }}>
-          <View className="flex-row gap-3">
-            <Button
-              variant="outline"
-              size="lg"
-              onPress={handlePrevious}
-              disabled={currentIndex === 0}
+          {/* Flashcard */}
+          <View className="flex-1 px-6 py-6">
+            <FlashCard
+              principle={currentPrinciple}
               className="flex-1"
-            >
-              ← Previous
-            </Button>
-            
-            {currentIndex === sessionPrinciples.length - 1 ? (
+              resetTrigger={cardResetTrigger}
+            />
+          </View>
+
+          {/* Navigation */}
+          <View className="px-6 py-4 bg-white border-t border-gray-100" style={{ paddingBottom: 34 }}>
+            <View className="flex-row gap-3">
               <Button
-                variant="primary"
+                variant="outline"
                 size="lg"
-                onPress={handleFinish}
+                onPress={handlePrevious}
+                disabled={currentIndex === 0}
                 className="flex-1"
               >
-                Finish Study ✅
+                ← Previous
               </Button>
-            ) : (
-              <Button
-                variant="primary"
-                size="lg"
-                onPress={handleNext}
-                className="flex-1"
-              >
-                Next →
-              </Button>
-            )}
+
+              {currentIndex === sessionPrinciples.length - 1 ? (
+                <Button
+                  variant="primary"
+                  size="lg"
+                  onPress={handleFinish}
+                  className="flex-1"
+                >
+                  Finish Study ✅
+                </Button>
+              ) : (
+                <Button
+                  variant="primary"
+                  size="lg"
+                  onPress={handleNext}
+                  className="flex-1"
+                >
+                  Next →
+                </Button>
+              )}
+            </View>
           </View>
         </View>
-      </View>
       </SafeAreaView>
     </>
   );

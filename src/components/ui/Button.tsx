@@ -1,6 +1,7 @@
 import React from 'react';
 import { TouchableOpacity, Text, ActivityIndicator } from 'react-native';
 import { cn } from '../../lib/utils';
+import * as Haptics from 'expo-haptics';
 
 interface ButtonProps {
   variant?: 'primary' | 'secondary' | 'ghost' | 'outline';
@@ -22,6 +23,11 @@ export function Button({
   className,
   ...props 
 }: ButtonProps) {
+  const handlePress = () => {
+    // Haptic feedback
+    Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light);
+    onPress();
+  };
   const baseStyles = [
     'flex-row items-center justify-center rounded-lg',
     // Size variants
@@ -53,9 +59,9 @@ export function Button({
   return (
     <TouchableOpacity
       className={cn(...baseStyles, className)}
-      onPress={onPress}
+      onPress={handlePress}
       disabled={disabled || loading}
-      activeOpacity={0.7}
+      activeOpacity={variant === 'primary' ? 1.0 : 0.7}
       {...props}
     >
       {loading ? (

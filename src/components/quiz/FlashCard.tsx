@@ -1,4 +1,4 @@
-import React, { useState, forwardRef } from 'react';
+import React, { useState, forwardRef, useEffect } from 'react';
 import { View, Text, TouchableOpacity } from 'react-native';
 import Animated, { 
   useSharedValue, 
@@ -16,12 +16,21 @@ import * as Haptics from 'expo-haptics';
 interface FlashCardProps {
   principle: Principle;
   className?: string;
+  resetTrigger?: number; // Add a reset trigger prop
 }
 
-export const FlashCard = forwardRef<View, FlashCardProps>(({ principle, className }, ref) => {
+export const FlashCard = forwardRef<View, FlashCardProps>(({ principle, className, resetTrigger }, ref) => {
   const [isFlipped, setIsFlipped] = useState(false);
   const flipAnimation = useSharedValue(0);
   const emoji = getPrincipleImage(principle.id);
+
+  // Reset card to front when resetTrigger changes
+  useEffect(() => {
+    if (resetTrigger !== undefined && isFlipped) {
+      setIsFlipped(false);
+      flipAnimation.value = withTiming(0, { duration: 0 });
+    }
+  }, [resetTrigger, isFlipped, flipAnimation]);
 
   const handleFlip = () => {
     // Haptic feedback

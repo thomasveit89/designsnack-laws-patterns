@@ -16,6 +16,7 @@ export default function FlashcardSessionScreen() {
   
   const [currentIndex, setCurrentIndex] = useState(0);
   const [sessionPrinciples, setSessionPrinciples] = useState<Principle[]>([]);
+  const [cardResetTrigger, setCardResetTrigger] = useState(0);
 
   useEffect(() => {
     // Filter principles based on mode
@@ -34,12 +35,14 @@ export default function FlashcardSessionScreen() {
   const handlePrevious = () => {
     if (currentIndex > 0) {
       setCurrentIndex(currentIndex - 1);
+      setCardResetTrigger(prev => prev + 1); // Trigger card reset
     }
   };
 
   const handleNext = () => {
     if (currentIndex < sessionPrinciples.length - 1) {
       setCurrentIndex(currentIndex + 1);
+      setCardResetTrigger(prev => prev + 1); // Trigger card reset
     }
   };
 
@@ -71,10 +74,18 @@ export default function FlashcardSessionScreen() {
   const progress = ((currentIndex + 1) / sessionPrinciples.length) * 100;
 
   return (
-    <SafeAreaView className="flex-1 bg-gray-50" edges={['top']}>
-      <View className="flex-1">
-        {/* Header */}
-        <View className="px-6 py-4 border-b border-gray-100 bg-white">
+    <SafeAreaView className="flex-1 bg-gray-50" edges={[]}>
+      {/* Custom Header with Status Bar */}
+      <View className="bg-white border-b border-gray-100">
+        {/* Status Bar Area with Progress */}
+        <View className="pt-12 pb-2">
+          <Text className="text-center text-base font-medium text-gray-600">
+            {currentIndex + 1} of {sessionPrinciples.length}
+          </Text>
+        </View>
+        
+        {/* Header Controls */}
+        <View className="px-6 pb-4">
           <View className="flex-row items-center justify-between mb-3">
             <Button
               variant="ghost"
@@ -84,9 +95,10 @@ export default function FlashcardSessionScreen() {
             >
               ← Back
             </Button>
-            <Text className="text-base font-medium text-gray-600">
-              {currentIndex + 1} of {sessionPrinciples.length}
+            <Text className="text-lg font-bold text-gray-900">
+              Study Session
             </Text>
+            <View className="w-16" />
           </View>
           
           {/* Progress Bar */}
@@ -97,17 +109,21 @@ export default function FlashcardSessionScreen() {
             />
           </View>
         </View>
+      </View>
+      
+      <View className="flex-1">
 
         {/* Flashcard */}
         <View className="flex-1 px-6 py-6">
           <FlashCard 
             principle={currentPrinciple}
             className="flex-1"
+            resetTrigger={cardResetTrigger}
           />
         </View>
 
         {/* Navigation */}
-        <View className="px-6 py-4 bg-white border-t border-gray-100">
+        <View className="px-6 py-4 bg-white border-t border-gray-100" style={{ paddingBottom: 34 }}>
           <View className="flex-row gap-3">
             <Button
               variant="outline"

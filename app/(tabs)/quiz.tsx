@@ -12,8 +12,7 @@ export default function PracticeScreen() {
   };
 
   const handleQuiz = () => {
-    // Placeholder for now
-    alert('Quiz mode coming soon! 🚀');
+    router.push('/quiz-setup');
   };
 
   return (
@@ -32,7 +31,7 @@ export default function PracticeScreen() {
         {/* Practice Modes */}
         <View className="flex-1 justify-center space-y-6">
           {/* Flashcards Mode */}
-          <View className="bg-white rounded-2xl p-6 shadow-sm border border-gray-100">
+          <View className="bg-white rounded-2xl p-6 shadow-sm border border-gray-100 mb-4">
             <View className="items-center mb-4">
               <Text className="text-4xl mb-2">🎴</Text>
               <Text className="text-xl font-bold text-gray-900 mb-2">
@@ -42,9 +41,9 @@ export default function PracticeScreen() {
                 Review principles at your own pace. See the title, flip to reveal the definition and key points.
               </Text>
             </View>
-            <Button 
-              variant="primary" 
-              size="lg" 
+            <Button
+              variant="primary"
+              size="lg"
               onPress={handleFlashcards}
               className="w-full"
             >
@@ -53,24 +52,23 @@ export default function PracticeScreen() {
           </View>
 
           {/* Quiz Mode */}
-          <View className="bg-white rounded-2xl p-6 shadow-sm border border-gray-100 opacity-60">
+          <View className="bg-white rounded-2xl p-6 shadow-sm border border-gray-100">
             <View className="items-center mb-4">
               <Text className="text-4xl mb-2">🧠</Text>
               <Text className="text-xl font-bold text-gray-900 mb-2">
                 Take a Quiz
               </Text>
               <Text className="text-base text-gray-600 text-center">
-                Test your knowledge with questions and scenarios. Coming soon!
+                Test your knowledge with AI-generated questions. 10 questions, multiple choice format.
               </Text>
             </View>
-            <Button 
-              variant="ghost" 
-              size="lg" 
+            <Button
+              variant="primary"
+              size="lg"
               onPress={handleQuiz}
               className="w-full"
-              disabled
             >
-              Coming Soon
+              Start Quiz
             </Button>
           </View>
         </View>

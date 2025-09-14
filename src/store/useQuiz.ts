@@ -1,0 +1,190 @@
+import { create } from 'zustand';
+import { QuizSession, QuizQuestion, QuizAnswer, QuizResult, Principle } from '../data/types';
+import { generateQuizQuestions, getFallbackQuizQuestions } from '../lib/openai';
+import { storage } from '../lib/storage';
+
+interface QuizState {
+  // Current session state
+  currentSession: QuizSession | null;
+  isLoading: boolean;
+  error: string | null;
+  
+  // Quiz history
+  completedSessions: QuizResult[];
+  
+  // Actions
+  startNewQuiz: (principles: Principle[], mode: 'all' | 'favorites') => Promise<void>;
+  answerQuestion: (questionId: string, selectedAnswer: number) => void;
+  goToQuestion: (index: number) => void;
+  submitQuiz: () => QuizResult | null;
+  resetQuiz: () => void;
+  loadQuizHistory: () => void;
+  clearError: () => void;
+}
+
+const QUIZ_HISTORY_KEY = 'quiz_history';
+
+export const useQuiz = create<QuizState>((set, get) => ({
+  currentSession: null,
+  isLoading: false,
+  error: null,
+  completedSessions: [],
+
+  startNewQuiz: async (principles: Principle[], mode: 'all' | 'favorites') => {
+    set({ isLoading: true, error: null });
+    
+    try {
+      let questions: QuizQuestion[];
+      
+      try {
+        // Try to generate questions using OpenAI
+        questions = await generateQuizQuestions(principles);
+      } catch (apiError) {
+        console.warn('OpenAI API failed, using fallback questions:', apiError);
+        // Fall back to simple questions if API fails
+        questions = getFallbackQuizQuestions(principles);
+      }
+      
+      const newSession: QuizSession = {
+        id: `quiz_${Date.now()}`,
+        questions,
+        answers: [],
+        currentQuestionIndex: 0,
+        startTime: new Date(),
+        score: 0,
+        mode,
+        principlesUsed: questions.map(q => q.principleId),
+      };
+      
+      set({ 
+        currentSession: newSession,
+        isLoading: false,
+        error: null 
+      });
+      
+    } catch (error) {
+      console.error('Failed to start quiz:', error);
+      set({ 
+        isLoading: false, 
+        error: error instanceof Error ? error.message : 'Failed to generate quiz questions' 
+      });
+    }
+  },
+
+  answerQuestion: (questionId: string, selectedAnswer: number) => {
+    const state = get();
+    if (!state.currentSession) return;
+    
+    const question = state.currentSession.questions.find(q => q.id === questionId);
+    if (!question) return;
+    
+    const isCorrect = selectedAnswer === question.correctAnswer;
+    
+    const newAnswer: QuizAnswer = {
+      questionId,
+      selectedAnswer,
+      isCorrect,
+      timeSpent: 0, // TODO: Calculate actual time spent
+    };
+    
+    // Update or add the answer
+    const existingAnswerIndex = state.currentSession.answers.findIndex(a => a.questionId === questionId);
+    let updatedAnswers: QuizAnswer[];
+    
+    if (existingAnswerIndex >= 0) {
+      // Update existing answer
+      updatedAnswers = [...state.currentSession.answers];
+      updatedAnswers[existingAnswerIndex] = newAnswer;
+    } else {
+      // Add new answer
+      updatedAnswers = [...state.currentSession.answers, newAnswer];
+    }
+    
+    // Update score
+    const score = updatedAnswers.filter(a => a.isCorrect).length;
+    
+    set({
+      currentSession: {
+        ...state.currentSession,
+        answers: updatedAnswers,
+        score,
+      }
+    });
+  },
+
+  goToQuestion: (index: number) => {
+    const state = get();
+    if (!state.currentSession || index < 0 || index >= state.currentSession.questions.length) {
+      return;
+    }
+    
+    set({
+      currentSession: {
+        ...state.currentSession,
+        currentQuestionIndex: index,
+      }
+    });
+  },
+
+  submitQuiz: () => {
+    const state = get();
+    if (!state.currentSession) return null;
+    
+    const endTime = new Date();
+    const totalTimeMs = endTime.getTime() - state.currentSession.startTime.getTime();
+    const averageTimePerQuestion = totalTimeMs / state.currentSession.questions.length;
+    
+    const completedSession: QuizSession = {
+      ...state.currentSession,
+      endTime,
+    };
+    
+    const result: QuizResult = {
+      session: completedSession,
+      totalQuestions: completedSession.questions.length,
+      correctAnswers: completedSession.score,
+      scorePercentage: Math.round((completedSession.score / completedSession.questions.length) * 100),
+      averageTimePerQuestion: Math.round(averageTimePerQuestion / 1000), // Convert to seconds
+    };
+    
+    // Save to history
+    const updatedHistory = [...state.completedSessions, result];
+    set({
+      completedSessions: updatedHistory,
+      currentSession: null,
+    });
+    
+    // Persist to storage
+    try {
+      storage.set(QUIZ_HISTORY_KEY, JSON.stringify(updatedHistory));
+    } catch (error) {
+      console.error('Failed to save quiz history:', error);
+    }
+    
+    return result;
+  },
+
+  resetQuiz: () => {
+    set({
+      currentSession: null,
+      isLoading: false,
+      error: null,
+    });
+  },
+
+  loadQuizHistory: () => {
+    try {
+      const historyJson = storage.getString(QUIZ_HISTORY_KEY);
+      if (historyJson) {
+        const history = JSON.parse(historyJson);
+        set({ completedSessions: history });
+      }
+    } catch (error) {
+      console.error('Failed to load quiz history:', error);
+    }
+  },
+
+  clearError: () => {
+    set({ error: null });
+  },
+}));

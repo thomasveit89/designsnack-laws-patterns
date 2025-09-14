@@ -1,32 +1,29 @@
-import React, { useState, useEffect } from 'react';
-import { Text, View, TouchableOpacity } from 'react-native';
+import React, { useState } from 'react';
+import { View, Text, TouchableOpacity } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { useRouter, Stack } from 'expo-router';
 import { Button } from '@/src/components/ui/Button';
 import { usePrinciples } from '@/src/store/usePrinciples';
 import { useFavorites } from '@/src/store/useFavorites';
 
-export default function FlashcardsScreen() {
+export default function QuizSetupScreen() {
   const router = useRouter();
-  const { principles, loadPrinciples } = usePrinciples();
-  const { loadFavorites, getFavoriteIds, getFavoriteCount } = useFavorites();
+  const { principles } = usePrinciples();
+  const { getFavoriteIds } = useFavorites();
   const [selectedMode, setSelectedMode] = useState<'all' | 'favorites'>('all');
-
-  useEffect(() => {
-    loadPrinciples();
-    loadFavorites();
-  }, [loadPrinciples, loadFavorites]);
-
-  const handleStartStudy = () => {
-    router.push(`/flashcard-session?mode=${selectedMode}`);
-  };
 
   const handleBack = () => {
     router.back();
   };
 
-  const favoriteCount = getFavoriteCount();
+  const handleStartQuiz = () => {
+    router.push(`/quiz-session?mode=${selectedMode}`);
+  };
+
+  const favoriteIds = getFavoriteIds();
+  const favoriteCount = favoriteIds.length;
   const principleCount = principles.length;
+  
   const studyCount = selectedMode === 'all' ? principleCount : favoriteCount;
 
   return (
@@ -44,10 +41,10 @@ export default function FlashcardsScreen() {
           </TouchableOpacity>
 
           <Text className="text-lg font-semibold text-gray-900">
-            Flashcards
+            Take a Quiz
           </Text>
 
-          <View className="w-12" />
+          <View className="w-16" />
         </View>
 
         <View className="flex-1 px-6 py-6">
@@ -55,7 +52,7 @@ export default function FlashcardsScreen() {
           {/* Study Mode Selection */}
           <View className="mb-8">
             <Text className="text-lg font-semibold text-gray-900 mb-4">
-              What would you like to study?
+              What would you like to be quizzed on?
             </Text>
 
             <View className="space-y-4">
@@ -82,10 +79,10 @@ export default function FlashcardsScreen() {
             </View>
           </View>
 
-          {/* Study Info */}
+          {/* Quiz Info */}
           <View className="bg-blue-50 rounded-xl p-4 mb-8">
             <Text className="text-base text-blue-800 text-center">
-              💡 Tap cards to flip them and see definitions. Study at your own pace!
+              🧠 You'll get 10 AI-generated multiple choice questions. Each question has 4 options with 1 correct answer.
             </Text>
           </View>
 
@@ -94,11 +91,11 @@ export default function FlashcardsScreen() {
             <Button
               variant="primary"
               size="lg"
-              onPress={handleStartStudy}
+              onPress={handleStartQuiz}
               className="w-full"
               disabled={studyCount === 0}
             >
-              Start Studying {studyCount > 0 && `(${studyCount} cards)`}
+              Start Quiz {studyCount > 0 && `(${studyCount} principles)`}
             </Button>
           </View>
         </View>

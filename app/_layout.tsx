@@ -16,9 +16,16 @@ export const unstable_settings = {
 export default function RootLayout() {
   const colorScheme = useColorScheme();
   const { initializeSync } = useQuiz();
-  const { principles } = usePrinciples();
+  const { principles, loadPrinciples } = usePrinciples();
 
-  // Initialize sync service when app starts
+  // Load principles when app starts
+  useEffect(() => {
+    loadPrinciples().catch(error => {
+      console.error('Failed to load principles:', error);
+    });
+  }, [loadPrinciples]);
+
+  // Initialize sync service when principles are loaded
   useEffect(() => {
     if (principles.length > 0) {
       const principleIds = principles.map(p => p.id);

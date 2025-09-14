@@ -1,5 +1,6 @@
 import { ApiService } from './api';
 import { QuestionCacheService } from './questionCache';
+import { ContentCacheService } from './contentCache';
 import { config } from './config';
 import { storage } from './storage';
 
@@ -116,14 +117,26 @@ export class SyncService {
     console.log('🚀 Initializing sync service...');
     
     try {
-      // Load quiz history if needed
-      // This could be where we restore cached quiz data
-      
-      // Check if immediate sync is needed
-      const cacheValid = QuestionCacheService.isCacheValid();
-      if (!cacheValid) {
-        console.log('📦 Cache invalid, attempting initial sync...');
-        await this.backgroundSync(principleIds);
+      // Check if storage is ready before doing cache checks
+      try {
+        // Check if content cache needs refresh
+        const contentCacheValid = ContentCacheService.isCacheValid();
+        if (!contentCacheValid) {
+          console.log('📦 Content cache invalid or missing');
+          // Content will be loaded by the principles store
+        }
+        
+        // Check if question cache needs refresh
+        const questionCacheValid = QuestionCacheService.isCacheValid();
+        if (!questionCacheValid) {
+          console.log('📦 Question cache invalid, attempting initial sync...');
+          // Don't await this - let it run in background
+          this.backgroundSync(principleIds).catch(error => {
+            console.warn('Background sync failed during init:', error);
+          });
+        }
+      } catch (storageError) {
+        console.warn('Storage check failed, continuing without sync:', storageError);
       }
       
       console.log('✅ Sync service initialized');

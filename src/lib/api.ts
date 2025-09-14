@@ -4,6 +4,7 @@ import { config } from './config';
 // API Endpoints
 const ENDPOINTS = {
   health: '/api/health',
+  principles: '/api/principles',
   questions: '/api/quiz/questions',
   sync: '/api/quiz/sync',
   generate: '/api/quiz/generate'
@@ -22,6 +23,25 @@ export interface GetQuestionsResponse {
   totalAvailable: number;
   success: boolean;
   message: string;
+}
+
+export interface GetPrinciplesResponse {
+  success: boolean;
+  data: {
+    principles: (Principle & { questionCount: number; lastUpdated: string })[];
+    categories: {
+      id: string;
+      name: string;
+      description: string;
+      icon: string;
+    }[];
+    meta: {
+      totalPrinciples: number;
+      totalCategories: number;
+      lastSynced: string;
+      version: string;
+    };
+  };
 }
 
 export interface ApiError {
@@ -72,6 +92,11 @@ export class ApiService {
   // Health check
   static async healthCheck(): Promise<{ status: string; timestamp: string }> {
     return this.makeRequest(ENDPOINTS.health);
+  }
+
+  // Get principles and categories
+  static async getPrinciples(): Promise<GetPrinciplesResponse> {
+    return this.makeRequest(ENDPOINTS.principles);
   }
 
   // Get quiz questions

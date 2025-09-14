@@ -27,6 +27,11 @@ export class QuestionCacheService {
   // Check if cache is valid and has sufficient questions
   static isCacheValid(): boolean {
     try {
+      if (!storage) {
+        console.warn('Storage not initialized');
+        return false;
+      }
+      
       const lastSyncStr = storage.getString(CACHE_KEYS.lastSync);
       if (!lastSyncStr) return false;
 
@@ -50,6 +55,11 @@ export class QuestionCacheService {
   // Get cached questions
   static getCachedQuestions(): QuizQuestion[] {
     try {
+      if (!storage) {
+        console.warn('Storage not initialized');
+        return [];
+      }
+      
       const questionsStr = storage.getString(CACHE_KEYS.questions);
       if (!questionsStr) return [];
 

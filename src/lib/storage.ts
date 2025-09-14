@@ -244,3 +244,6 @@ export const genericStorage = {
     storage.clearAll();
   }
 };
+
+// Export the main storage instance
+export { storage };

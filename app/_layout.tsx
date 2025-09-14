@@ -1,10 +1,13 @@
 import { DarkTheme, DefaultTheme, ThemeProvider } from '@react-navigation/native';
 import { Stack } from 'expo-router';
 import { StatusBar } from 'expo-status-bar';
+import { useEffect } from 'react';
 import 'react-native-reanimated';
 import '../global.css';
 
 import { useColorScheme } from '@/hooks/use-color-scheme';
+import { useQuiz } from '@/src/store/useQuiz';
+import { usePrinciples } from '@/src/store/usePrinciples';
 
 export const unstable_settings = {
   anchor: '(tabs)',
@@ -12,6 +15,18 @@ export const unstable_settings = {
 
 export default function RootLayout() {
   const colorScheme = useColorScheme();
+  const { initializeSync } = useQuiz();
+  const { principles } = usePrinciples();
+
+  // Initialize sync service when app starts
+  useEffect(() => {
+    if (principles.length > 0) {
+      const principleIds = principles.map(p => p.id);
+      initializeSync(principleIds).catch(error => {
+        console.warn('Failed to initialize sync service:', error);
+      });
+    }
+  }, [principles.length, initializeSync]);
 
   return (
     <ThemeProvider value={colorScheme === 'dark' ? DarkTheme : DefaultTheme}>

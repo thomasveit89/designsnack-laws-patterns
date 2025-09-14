@@ -2,6 +2,9 @@ import { create } from 'zustand';
 import { QuizSession, QuizQuestion, QuizAnswer, QuizResult, Principle } from '../data/types';
 import { generateQuizQuestions, getFallbackQuizQuestions } from '../lib/openai';
 import { storage } from '../lib/storage';
+import { SyncService } from '../lib/syncService';
+import { QuestionCacheService } from '../lib/questionCache';
+import { config } from '../lib/config';
 
 interface QuizState {
   // Current session state
@@ -12,6 +15,11 @@ interface QuizState {
   // Quiz history
   completedSessions: QuizResult[];
   
+  // Sync state
+  isSyncing: boolean;
+  lastSyncTime: Date | null;
+  syncError: string | null;
+  
   // Actions
   startNewQuiz: (principles: Principle[], mode: 'all' | 'favorites') => Promise<void>;
   answerQuestion: (questionId: string, selectedAnswer: number) => void;
@@ -20,6 +28,12 @@ interface QuizState {
   resetQuiz: () => void;
   loadQuizHistory: () => void;
   clearError: () => void;
+  
+  // Sync actions
+  syncQuestions: (principleIds: string[]) => Promise<void>;
+  initializeSync: (principleIds: string[]) => Promise<void>;
+  getSyncStatus: () => { lastSync: Date | null; needsSync: boolean; totalCached: number };
+  clearSyncError: () => void;
 }
 
 const QUIZ_HISTORY_KEY = 'quiz_history';
@@ -29,6 +43,11 @@ export const useQuiz = create<QuizState>((set, get) => ({
   isLoading: false,
   error: null,
   completedSessions: [],
+  
+  // Sync state
+  isSyncing: false,
+  lastSyncTime: null,
+  syncError: null,
 
   startNewQuiz: async (principles: Principle[], mode: 'all' | 'favorites') => {
     set({ isLoading: true, error: null });
@@ -186,5 +205,56 @@ export const useQuiz = create<QuizState>((set, get) => ({
 
   clearError: () => {
     set({ error: null });
+  },
+
+  // Sync methods
+  syncQuestions: async (principleIds: string[]) => {
+    const state = get();
+    if (state.isSyncing) return; // Prevent multiple syncs
+
+    set({ isSyncing: true, syncError: null });
+
+    try {
+      const result = await SyncService.forceSync(principleIds);
+      
+      if (result.success) {
+        set({
+          isSyncing: false,
+          lastSyncTime: new Date(),
+          syncError: null
+        });
+        console.log(`✅ Manual sync completed: ${result.synced} new, ${result.cached} cached`);
+      } else {
+        throw new Error(result.error || 'Sync failed');
+      }
+    } catch (error) {
+      set({
+        isSyncing: false,
+        syncError: error instanceof Error ? error.message : 'Sync failed'
+      });
+      console.error('❌ Manual sync failed:', error);
+    }
+  },
+
+  initializeSync: async (principleIds: string[]) => {
+    try {
+      await SyncService.initialize(principleIds);
+      
+      // Update sync status from service
+      const status = SyncService.getSyncStatus();
+      set({ lastSyncTime: status.lastSync });
+      
+    } catch (error) {
+      console.warn('Sync initialization failed:', error);
+      set({ syncError: error instanceof Error ? error.message : 'Sync init failed' });
+    }
+  },
+
+  getSyncStatus: () => {
+    return SyncService.getSyncStatus();
+  },
+
+  clearSyncError: () => {
+    set({ syncError: null });
   },
 }));

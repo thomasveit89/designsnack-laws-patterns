@@ -118,6 +118,10 @@ export const favoritesStorage = {
   
   getList: (): string[] => {
     return [...favoritesStorage.get()];
+  },
+  
+  clear: () => {
+    favoritesStorage.set(new Set());
   }
 };
 

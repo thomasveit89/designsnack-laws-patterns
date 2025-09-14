@@ -9,7 +9,7 @@ import Animated, {
 } from 'react-native-reanimated';
 import { Principle } from '../../data/types';
 import { CategoryChip } from '../shared/CategoryChip';
-import { getPrincipleImage } from '../../lib/image-placeholders';
+import { getPrincipleEmoji } from '../../lib/image-placeholders';
 import { getTypeLabel } from '../../lib/utils';
 import * as Haptics from 'expo-haptics';
 
@@ -22,7 +22,7 @@ interface FlashCardProps {
 export const FlashCard = forwardRef<View, FlashCardProps>(({ principle, className, resetTrigger }, ref) => {
   const [isFlipped, setIsFlipped] = useState(false);
   const flipAnimation = useSharedValue(0);
-  const emoji = getPrincipleImage(principle.id);
+  const emoji = getPrincipleEmoji(principle.title);
 
   // Reset card to front when resetTrigger changes (but only if we're navigating)
   useEffect(() => {

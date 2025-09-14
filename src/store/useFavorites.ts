@@ -12,6 +12,7 @@ interface FavoritesStore {
   isFavorite: (principleId: string) => boolean;
   getFavoriteIds: () => string[];
   getFavoriteCount: () => number;
+  clearFavorites: () => void;
 }
 
 export const useFavorites = create<FavoritesStore>((set, get) => ({
@@ -69,5 +70,18 @@ export const useFavorites = create<FavoritesStore>((set, get) => ({
 
   getFavoriteCount: () => {
     return get().favorites.size;
+  },
+
+  clearFavorites: () => {
+    // Clear from storage
+    favoritesStorage.clear();
+    
+    // Clear from state
+    set({ favorites: new Set() });
+    
+    // Light haptic feedback for confirmation
+    Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light);
+    
+    console.log('🗑️ Favorites cleared');
   },
 }));

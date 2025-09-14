@@ -24,9 +24,40 @@ export const PRINCIPLE_IMAGES = {
   'error-prevention': '🛡️'
 } as const;
 
-// Get placeholder for principle
+// Emoji mappings by title (since API uses UUID IDs)
+export const EMOJI_BY_TITLE = {
+  "Fitts's Law": '🎯',
+  "Hick's Law": '🤔', 
+  "Miller's Rule": '🧠',
+  "Jakob's Law": '🔄',
+  "Pareto Principle": '📊',
+  "Proximity Principle": '📦',
+  "Serial Position Effect": '📋',
+  "Zeigarnik Effect": '⚪',
+  "Peak-End Rule": '📈',
+  "Von Restorff Effect": '🌟',
+  "Confirmation Bias": '🔍',
+  "Anchoring Bias": '⚓',
+  "Loss Aversion": '💸',
+  "Choice Overload": '🤯',
+  "Availability Heuristic": '💭',
+  "Dunning-Kruger Effect": '🎓',
+  "Sunk Cost Fallacy": '🕳️',
+  "Recognition over Recall": '👁️',
+  "Consistency and Standards": '📐',
+  "Error Prevention": '🛡️',
+  "Aesthetic-Usability Effect": '✨',
+  "Cognitive Load Theory": '🧮'
+} as const;
+
+// Get placeholder for principle (backwards compatibility)
 export function getPrincipleImage(principleId: string): string {
   return PRINCIPLE_IMAGES[principleId as keyof typeof PRINCIPLE_IMAGES] || '📚';
+}
+
+// Get emoji by principle title
+export function getPrincipleEmoji(title: string): string {
+  return EMOJI_BY_TITLE[title as keyof typeof EMOJI_BY_TITLE] || '📚';
 }
 
 // Category colors matching our design tokens

@@ -4,6 +4,7 @@ export interface AppConfig {
   api: {
     baseUrl: string;
     timeout: number;
+    enabled: boolean;
   };
   cache: {
     maxAge: number; // milliseconds
@@ -24,8 +25,9 @@ export interface AppConfig {
 // Development configuration
 const developmentConfig: AppConfig = {
   api: {
-    baseUrl: 'http://localhost:3000',
+    baseUrl: 'https://designsnack-laws-patterns-backend.vercel.app',
     timeout: 10000, // 10 seconds
+    enabled: true,
   },
   cache: {
     maxAge: 24 * 60 * 60 * 1000, // 24 hours for development
@@ -48,6 +50,7 @@ const productionConfig: AppConfig = {
   api: {
     baseUrl: 'https://designsnack-laws-patterns-backend.vercel.app',
     timeout: 15000, // 15 seconds
+    enabled: true,
   },
   cache: {
     maxAge: 7 * 24 * 60 * 60 * 1000, // 7 days

@@ -3,7 +3,7 @@ import { View, Text, TouchableOpacity } from 'react-native';
 import { Principle } from '../../data/types';
 import { FavoriteButton } from '../shared/FavoriteButton';
 import { CategoryChip } from '../shared/CategoryChip';
-import { getPrincipleImage } from '../../lib/image-placeholders';
+import { getPrincipleEmoji } from '../../lib/image-placeholders';
 import { getTypeLabel } from '../../lib/utils';
 import { cn } from '../../lib/utils';
 
@@ -18,7 +18,7 @@ export function PrincipleListCard({
   onPress,
   className 
 }: PrincipleListCardProps) {
-  const emoji = getPrincipleImage(principle.id);
+  const emoji = getPrincipleEmoji(principle.title);
 
   return (
     <TouchableOpacity 

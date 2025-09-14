@@ -71,7 +71,9 @@ export class ApiService {
     };
 
     try {
+      console.log('📡 API Request:', options.method || 'GET', url);
       const response = await fetch(url, requestConfig);
+      console.log('📡 API Response:', response.status, response.statusText);
       
       if (!response.ok) {
         const errorData: ApiError = await response.json().catch(() => ({

@@ -30,61 +30,70 @@ export const usePrinciples = create<PrinciplesStore>((set, get) => ({
   isOffline: false,
 
   loadPrinciples: async () => {
+    console.log('🔄 loadPrinciples called');
+    console.log('📊 API config:', { 
+      enabled: config.api.enabled, 
+      baseUrl: config.api.baseUrl,
+      timeout: config.api.timeout 
+    });
+    
     set({ isLoading: true, error: null });
     
     try {
-      // Try to load from cache first
+      // Try to load from API first if enabled
+      if (config.api.enabled) {
+        console.log('🌐 Loading principles from API first...');
+        await get().refreshPrinciples();
+        return;
+      }
+
+      // If API is disabled, try to load from cache
       const cached = ContentCacheService.getCachedPrinciples();
       
-      if (cached && ContentCacheService.isCacheValid()) {
-        console.log('📦 Loading principles from cache');
+      if (cached) {
+        console.log('📦 Loading principles from cache (API disabled)');
         set({
           principles: cached.principles,
           categories: cached.categories,
           lastSynced: cached.lastSync,
           isLoading: false,
-          isOffline: false
+          isOffline: true
         });
-        
-        // Try to refresh in background if API is enabled
-        if (config.api.enabled) {
-          get().refreshPrinciples().catch(console.warn);
-        }
         return;
       }
 
-      // Load from API if cache is invalid or empty
-      if (config.api.enabled) {
-        await get().refreshPrinciples();
-      } else {
-        // Fallback: load from cache even if expired, or show error
-        if (cached) {
-          console.warn('⚠️ Using expired cache (API disabled)');
-          set({
-            principles: cached.principles,
-            categories: cached.categories,
-            lastSynced: cached.lastSync,
-            isLoading: false,
-            isOffline: true
-          });
-        } else {
-          throw new Error('No cached data available and API is disabled');
-        }
-      }
+      // No cache and API disabled - this is an error state
+      throw new Error('No cached data available and API is disabled');
       
     } catch (error) {
       console.error('Failed to load principles:', error);
-      set({ 
-        error: error instanceof Error ? error.message : 'Failed to load principles',
-        isLoading: false,
-        isOffline: true
-      });
+      
+      // Fallback to cache if API fails
+      const cached = ContentCacheService.getCachedPrinciples();
+      if (cached) {
+        console.warn('⚠️ Using cached data after API failure');
+        set({
+          principles: cached.principles,
+          categories: cached.categories,
+          lastSynced: cached.lastSync,
+          isLoading: false,
+          error: 'API unavailable (using cached data)',
+          isOffline: true
+        });
+      } else {
+        set({ 
+          error: error instanceof Error ? error.message : 'Failed to load principles',
+          isLoading: false,
+          isOffline: true
+        });
+      }
     }
   },
 
   refreshPrinciples: async () => {
     try {
       console.log('🌐 Fetching principles from API...');
+      console.log('📡 Making request to:', config.api.baseUrl + '/api/principles');
       const response = await ApiService.getPrinciples();
       
       if (response.success) {

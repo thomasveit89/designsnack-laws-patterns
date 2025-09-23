@@ -55,18 +55,33 @@ export async function generateQuizQuestions(principles: Principle[]): Promise<Qu
 // Fallback quiz questions in case API fails
 export function getFallbackQuizQuestions(principles: Principle[]): QuizQuestion[] {
   const selectedPrinciples = principles.slice(0, 10);
-  
-  return selectedPrinciples.map((principle, index) => ({
-    id: `fallback_${principle.id}_${index}`,
-    principleId: principle.id,
-    question: `What is the main idea behind ${principle.title}?`,
-    options: [
+
+  return selectedPrinciples.map((principle, index) => {
+    // Create the options with the correct answer first
+    const options = [
       principle.oneLiner,
       "Users prefer complex interfaces with many options",
       "Design should always prioritize aesthetics over functionality",
       "All users behave exactly the same way"
-    ],
-    correctAnswer: 0,
-    explanation: `The correct answer is: "${principle.oneLiner}"`
-  }));
+    ];
+
+    // Randomize the position of the correct answer
+    const correctAnswerIndex = Math.floor(Math.random() * options.length);
+
+    // Shuffle the options while keeping track of correct answer position
+    const shuffledOptions = [...options];
+    if (correctAnswerIndex !== 0) {
+      // Swap the correct answer to the random position
+      [shuffledOptions[0], shuffledOptions[correctAnswerIndex]] = [shuffledOptions[correctAnswerIndex], shuffledOptions[0]];
+    }
+
+    return {
+      id: `fallback_${principle.id}_${index}`,
+      principleId: principle.id,
+      question: `What is the main idea behind ${principle.title}?`,
+      options: shuffledOptions,
+      correctAnswer: correctAnswerIndex,
+      explanation: `The correct answer is: "${principle.oneLiner}"`
+    };
+  });
 }

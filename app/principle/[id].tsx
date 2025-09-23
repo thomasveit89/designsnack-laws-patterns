@@ -6,7 +6,7 @@ import { usePrinciples } from '@/src/store/usePrinciples';
 import { FavoriteButton } from '@/src/components/shared/FavoriteButton';
 import { CategoryChip } from '@/src/components/shared/CategoryChip';
 import { Button } from '@/src/components/ui/Button';
-import { getPrincipleImage } from '@/src/lib/image-placeholders';
+import { getPrincipleEmoji } from '@/src/lib/image-placeholders';
 import { getTypeLabel } from '@/src/lib/utils';
 import { Principle } from '@/src/data/types';
 
@@ -37,7 +37,7 @@ export default function PrincipleDetailScreen() {
     );
   }
 
-  const emoji = getPrincipleImage(principle.id);
+  const emoji = getPrincipleEmoji(principle.title);
 
   return (
     <>

@@ -96,13 +96,13 @@ export default function HomeScreen() {
 
   return (
     <SafeAreaView className="flex-1 bg-gray-50" edges={['top']}>
-      <ScrollView 
+      <ScrollView
         className="flex-1"
         showsVerticalScrollIndicator={false}
         contentContainerStyle={{ paddingBottom: insets.bottom + 80, paddingTop: 16 }}
       >
         {/* Daily Principle Card */}
-        <DailyCard 
+        <DailyCard
           principle={todaysPrinciple}
           onLearnMore={handleLearnMore}
         />

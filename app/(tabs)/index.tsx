@@ -52,9 +52,11 @@ export default function LibraryScreen() {
         // Map display labels to actual category values
         const categoryMap: Record<string, string> = {
           'Attention': 'attention',
-          'Memory': 'memory', 
+          'Memory': 'memory',
           'Decision Making': 'decisions',
-          'Usability': 'usability'
+          'Usability': 'usability',
+          'Persuasion': 'persuasion',
+          'Visual Design': 'visual'
         };
         const actualCategory = categoryMap[categoryFilter];
         if (actualCategory) {

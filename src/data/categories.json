@@ -2,25 +2,37 @@
   {
     "id": "attention",
     "label": "Attention",
-    "description": "How users notice, focus on, and process visual information",
+    "description": "Visual hierarchy, contrast, scanning, and focal points",
     "color": "#EF4444"
   },
   {
-    "id": "memory", 
+    "id": "memory",
     "label": "Memory",
-    "description": "How users store, recall, and work with information in their minds",
+    "description": "Chunking, spacing effect, recall, and recognition",
     "color": "#8B5CF6"
   },
   {
     "id": "decisions",
-    "label": "Decision Making", 
-    "description": "How users evaluate options, make choices, and form judgments",
+    "label": "Decision Making",
+    "description": "Biases, heuristics, and choice architecture",
     "color": "#10B981"
   },
   {
     "id": "usability",
     "label": "Usability",
-    "description": "How users interact with and navigate through interfaces effectively",
+    "description": "Interface design, interactions, and user flow",
     "color": "#F59E0B"
+  },
+  {
+    "id": "persuasion",
+    "label": "Persuasion",
+    "description": "Business psychology: scarcity, social proof, authority",
+    "color": "#EC4899"
+  },
+  {
+    "id": "visual",
+    "label": "Visual Design",
+    "description": "Aesthetic principles and visual design laws",
+    "color": "#6366F1"
   }
 ]

@@ -16,7 +16,7 @@ export async function generateQuizQuestions(principles: Principle[]): Promise<Qu
 
   try {
     console.log('🌐 Fetching questions from backend API...');
-    
+
     // Try to get questions from backend API
     const response = await ApiService.getQuestions({
       principleIds,
@@ -26,27 +26,26 @@ export async function generateQuizQuestions(principles: Principle[]): Promise<Qu
 
     if (response.success && response.questions.length > 0) {
       console.log(`✅ Retrieved ${response.questions.length} questions from API`);
-      
+
       // Cache the questions for offline use
       QuestionCacheService.updateCache(response.questions, principleIds);
-      
+
       return response.questions;
     } else {
       throw new Error('No questions returned from API');
     }
 
   } catch (apiError) {
-    console.warn('🔄 Backend API unavailable, trying cached questions:', apiError);
-    
-    // Fall back to cached questions
+    console.warn('🔄 Backend API unavailable, falling back to cached questions...');
+
+    // Try to use cached questions first
     const cachedQuestions = QuestionCacheService.getRandomCachedQuestions(principleIds, 10);
-    
     if (cachedQuestions.length >= 10) {
       console.log(`📦 Using ${cachedQuestions.length} cached questions`);
       return cachedQuestions;
     }
 
-    // Final fallback to simple questions
+    // If no cached questions available, use fallback questions
     console.warn('⚠️ No cached questions available, using fallback questions');
     return getFallbackQuizQuestions(selectedPrinciples);
   }
@@ -57,29 +56,26 @@ export function getFallbackQuizQuestions(principles: Principle[]): QuizQuestion[
   const selectedPrinciples = principles.slice(0, 10);
 
   return selectedPrinciples.map((principle, index) => {
-    // Create the options with the correct answer first
+    // Create the options array
     const options = [
-      principle.oneLiner,
       "Users prefer complex interfaces with many options",
       "Design should always prioritize aesthetics over functionality",
-      "All users behave exactly the same way"
+      "All users behave exactly the same way",
+      principle.oneLiner // Correct answer
     ];
 
     // Randomize the position of the correct answer
     const correctAnswerIndex = Math.floor(Math.random() * options.length);
 
-    // Shuffle the options while keeping track of correct answer position
-    const shuffledOptions = [...options];
-    if (correctAnswerIndex !== 0) {
-      // Swap the correct answer to the random position
-      [shuffledOptions[0], shuffledOptions[correctAnswerIndex]] = [shuffledOptions[correctAnswerIndex], shuffledOptions[0]];
-    }
+    // Move correct answer to random position
+    const correctAnswer = options.pop()!; // Remove correct answer from end
+    options.splice(correctAnswerIndex, 0, correctAnswer); // Insert at random position
 
     return {
       id: `fallback_${principle.id}_${index}`,
       principleId: principle.id,
       question: `What is the main idea behind ${principle.title}?`,
-      options: shuffledOptions,
+      options: options,
       correctAnswer: correctAnswerIndex,
       explanation: `The correct answer is: "${principle.oneLiner}"`
     };

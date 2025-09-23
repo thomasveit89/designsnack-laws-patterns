@@ -1,11 +1,11 @@
 import React, { useEffect, useState } from 'react';
 import { View, ScrollView, Text, TouchableOpacity } from 'react-native';
-import { SafeAreaView } from 'react-native-safe-area-context';
+import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { useLocalSearchParams, useRouter, Stack } from 'expo-router';
+import { StatusBar } from 'expo-status-bar';
 import { usePrinciples } from '@/src/store/usePrinciples';
 import { FavoriteButton } from '@/src/components/shared/FavoriteButton';
 import { CategoryChip } from '@/src/components/shared/CategoryChip';
-import { Button } from '@/src/components/ui/Button';
 import { getPrincipleEmoji } from '@/src/lib/image-placeholders';
 import { getTypeLabel } from '@/src/lib/utils';
 import { Principle } from '@/src/data/types';
@@ -15,6 +15,7 @@ export default function PrincipleDetailScreen() {
   const router = useRouter();
   const { principles, loadPrinciples } = usePrinciples();
   const [principle, setPrinciple] = useState<Principle | null>(null);
+  const insets = useSafeAreaInsets();
 
   useEffect(() => {
     loadPrinciples();
@@ -29,11 +30,16 @@ export default function PrincipleDetailScreen() {
 
   if (!principle) {
     return (
-      <SafeAreaView className="flex-1 bg-gray-50">
-        <View className="flex-1 justify-center items-center">
-          <Text className="text-lg text-gray-600">Loading principle...</Text>
+      <>
+        <StatusBar style="dark" />
+        <View className="flex-1 bg-white" style={{ paddingTop: insets.top }}>
+          <View className="flex-1 bg-gray-50">
+            <View className="flex-1 justify-center items-center">
+              <Text className="text-lg text-gray-600">Loading principle...</Text>
+            </View>
+          </View>
         </View>
-      </SafeAreaView>
+      </>
     );
   }
 
@@ -42,9 +48,11 @@ export default function PrincipleDetailScreen() {
   return (
     <>
       <Stack.Screen options={{ headerShown: false }} />
-      <SafeAreaView className="flex-1 bg-gray-50">
-        {/* Header */}
-      <View className="flex-row items-center justify-between px-6 py-4 bg-white border-b border-gray-100">
+      <StatusBar style="dark" />
+      <View className="flex-1 bg-white" style={{ paddingTop: insets.top }}>
+        <View className="flex-1 bg-gray-50">
+          {/* Header */}
+          <View className="flex-row items-center justify-between px-6 py-4 bg-white border-b border-gray-100">
         <TouchableOpacity 
           onPress={() => router.back()}
           className="flex-row items-center"
@@ -58,11 +66,11 @@ export default function PrincipleDetailScreen() {
         />
       </View>
 
-      <ScrollView 
-        className="flex-1"
-        showsVerticalScrollIndicator={false}
-        contentContainerStyle={{ paddingBottom: 32 }}
-      >
+          <ScrollView
+            className="flex-1"
+            showsVerticalScrollIndicator={false}
+            contentContainerStyle={{ paddingBottom: Math.max(insets.bottom, 32) }}
+          >
         {/* Hero Section */}
         <View className="bg-white px-6 py-8 mb-6">
           {/* Emoji */}
@@ -214,8 +222,9 @@ export default function PrincipleDetailScreen() {
             </View>
           </View>
         )}
-      </ScrollView>
-      </SafeAreaView>
+          </ScrollView>
+        </View>
+      </View>
     </>
   );
 }

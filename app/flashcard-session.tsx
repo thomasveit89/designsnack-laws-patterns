@@ -1,7 +1,8 @@
 import React, { useState, useEffect } from 'react';
 import { View, Text, TouchableOpacity } from 'react-native';
-import { SafeAreaView } from 'react-native-safe-area-context';
+import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { useRouter, useLocalSearchParams, Stack } from 'expo-router';
+import { StatusBar } from 'expo-status-bar';
 import { Button } from '@/src/components/ui/Button';
 import { FlashCard } from '@/src/components/quiz/FlashCard';
 import { usePrinciples } from '@/src/store/usePrinciples';
@@ -10,6 +11,7 @@ import { Principle } from '@/src/data/types';
 
 export default function FlashcardSessionScreen() {
   const router = useRouter();
+  const insets = useSafeAreaInsets();
   const { mode } = useLocalSearchParams<{ mode: 'all' | 'favorites' }>();
   const { principles } = usePrinciples();
   const { getFavoriteIds } = useFavorites();
@@ -52,8 +54,10 @@ export default function FlashcardSessionScreen() {
 
   if (sessionPrinciples.length === 0) {
     return (
-      <SafeAreaView className="flex-1 bg-gray-50">
-        <View className="flex-1 justify-center items-center px-6">
+      <>
+        <StatusBar style="dark" />
+        <View className="flex-1 bg-white" style={{ paddingTop: insets.top }}>
+          <View className="flex-1 bg-gray-50 justify-center items-center px-6">
           <Text className="text-xl font-bold text-gray-900 mb-2">
             No principles to study
           </Text>
@@ -65,8 +69,9 @@ export default function FlashcardSessionScreen() {
           <Button variant="primary" size="lg" onPress={handleFinish}>
             Back to Practice
           </Button>
+          </View>
         </View>
-      </SafeAreaView>
+      </>
     );
   }
 
@@ -76,16 +81,14 @@ export default function FlashcardSessionScreen() {
   return (
     <>
       <Stack.Screen options={{ headerShown: false }} />
-      <SafeAreaView className="flex-1 bg-gray-50" edges={[]}>
-        {/* Custom Header */}
-        <View className="bg-white border-b border-gray-100">
-          {/* Status Bar Area */}
-          <View className="pt-12 pb-2">
-            <View className="h-6" />
-          </View>
+      <StatusBar style="dark" />
+      <View className="flex-1 bg-white" style={{ paddingTop: insets.top }}>
+        <View className="flex-1 bg-gray-50">
+          {/* Custom Header */}
+          <View className="bg-white border-b border-gray-100">
 
           {/* Header Controls */}
-          <View className="px-6 pb-4">
+          <View className="px-6 py-4">
             <View className="flex-row items-center justify-between">
               <TouchableOpacity
                 onPress={handleFinish}
@@ -161,7 +164,8 @@ export default function FlashcardSessionScreen() {
             </View>
           </View>
         </View>
-      </SafeAreaView>
+        </View>
+      </View>
     </>
   );
 }

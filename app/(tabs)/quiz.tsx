@@ -1,11 +1,12 @@
 import React from 'react';
-import { Text, View } from 'react-native';
-import { SafeAreaView } from 'react-native-safe-area-context';
+import { Text, View, ScrollView } from 'react-native';
+import { SafeAreaView, useSafeAreaInsets } from 'react-native-safe-area-context';
 import { useRouter } from 'expo-router';
 import { Button } from '@/src/components/ui/Button';
 
 export default function PracticeScreen() {
   const router = useRouter();
+  const insets = useSafeAreaInsets();
 
   const handleFlashcards = () => {
     router.push('/flashcards');
@@ -17,9 +18,13 @@ export default function PracticeScreen() {
 
   return (
     <SafeAreaView className="flex-1 bg-gray-50">
-      <View className="flex-1 px-6 py-8">
+      <ScrollView
+        className="flex-1"
+        contentContainerStyle={{ paddingHorizontal: 20, paddingVertical: 24, paddingBottom: Math.max(insets.bottom, 32) }}
+        showsVerticalScrollIndicator={false}
+      >
         {/* Header */}
-        <View className="mb-8">
+        <View className="mb-6">
           <Text className="text-2xl font-bold text-gray-900 mb-2">
             Practice
           </Text>
@@ -72,7 +77,7 @@ export default function PracticeScreen() {
             </Button>
           </View>
         </View>
-      </View>
+      </ScrollView>
     </SafeAreaView>
   );
 }

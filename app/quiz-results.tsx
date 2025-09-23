@@ -1,11 +1,13 @@
 import React from 'react';
 import { View, Text, ScrollView, TouchableOpacity } from 'react-native';
-import { SafeAreaView } from 'react-native-safe-area-context';
+import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { useRouter, useLocalSearchParams, Stack } from 'expo-router';
+import { StatusBar } from 'expo-status-bar';
 import { Button } from '@/src/components/ui/Button';
 
 export default function QuizResultsScreen() {
   const router = useRouter();
+  const insets = useSafeAreaInsets();
   const { score, total, percentage } = useLocalSearchParams<{
     score: string;
     total: string;
@@ -51,9 +53,11 @@ export default function QuizResultsScreen() {
   return (
     <>
       <Stack.Screen options={{ headerShown: false }} />
-      <SafeAreaView className="flex-1 bg-gray-50">
-        {/* Header */}
-        <View className="flex-row items-center justify-between px-6 py-4 bg-white border-b border-gray-100">
+      <StatusBar style="dark" />
+      <View className="flex-1 bg-white" style={{ paddingTop: insets.top }}>
+        <View className="flex-1 bg-gray-50">
+          {/* Header */}
+          <View className="flex-row items-center justify-between px-6 py-4 bg-white border-b border-gray-100">
           <TouchableOpacity
             onPress={handleReturnToPractice}
             className="flex-row items-center"
@@ -162,7 +166,8 @@ export default function QuizResultsScreen() {
             </View>
           </View>
         </ScrollView>
-      </SafeAreaView>
+        </View>
+      </View>
     </>
   );
 }

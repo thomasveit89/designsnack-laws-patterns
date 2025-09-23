@@ -1,7 +1,8 @@
 import React, { useEffect, useState } from 'react';
 import { View, Text, TouchableOpacity, ActivityIndicator, Alert } from 'react-native';
-import { SafeAreaView } from 'react-native-safe-area-context';
+import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { useRouter, useLocalSearchParams, Stack } from 'expo-router';
+import { StatusBar } from 'expo-status-bar';
 import { Button } from '@/src/components/ui/Button';
 import { QuizQuestion } from '@/src/components/quiz/QuizQuestion';
 import { useQuiz } from '@/src/store/useQuiz';
@@ -10,6 +11,7 @@ import { useFavorites } from '@/src/store/useFavorites';
 
 export default function QuizSessionScreen() {
   const router = useRouter();
+  const insets = useSafeAreaInsets();
   const { mode } = useLocalSearchParams<{ mode: 'all' | 'favorites' }>();
   const { principles } = usePrinciples();
   const { getFavoriteIds } = useFavorites();
@@ -137,8 +139,11 @@ export default function QuizSessionScreen() {
   // Loading state
   if (isLoading) {
     return (
-      <SafeAreaView className="flex-1 bg-gray-50">
-        <View className="flex-1 justify-center items-center px-6">
+      <>
+        <Stack.Screen options={{ headerShown: false }} />
+        <StatusBar style="dark" />
+        <View className="flex-1 bg-white" style={{ paddingTop: insets.top }}>
+          <View className="flex-1 bg-gray-50 justify-center items-center px-6">
           <ActivityIndicator size="large" color="#0EA5E9" className="mb-4" />
           <Text className="text-lg font-semibold text-gray-900 mb-2">
             Generating Quiz Questions...
@@ -146,16 +151,20 @@ export default function QuizSessionScreen() {
           <Text className="text-base text-gray-600 text-center">
             Our AI is creating personalized questions for you
           </Text>
+          </View>
         </View>
-      </SafeAreaView>
+      </>
     );
   }
 
   // Error state
   if (error) {
     return (
-      <SafeAreaView className="flex-1 bg-gray-50">
-        <View className="flex-1 justify-center items-center px-6">
+      <>
+        <Stack.Screen options={{ headerShown: false }} />
+        <StatusBar style="dark" />
+        <View className="flex-1 bg-white" style={{ paddingTop: insets.top }}>
+          <View className="flex-1 bg-gray-50 justify-center items-center px-6">
           <Text className="text-6xl mb-4">⚠️</Text>
           <Text className="text-xl font-bold text-gray-900 mb-2">
             Quiz Generation Failed
@@ -185,16 +194,20 @@ export default function QuizSessionScreen() {
               Try Again
             </Button>
           </View>
+          </View>
         </View>
-      </SafeAreaView>
+      </>
     );
   }
 
   // No session state
   if (!currentSession) {
     return (
-      <SafeAreaView className="flex-1 bg-gray-50">
-        <View className="flex-1 justify-center items-center px-6">
+      <>
+        <Stack.Screen options={{ headerShown: false }} />
+        <StatusBar style="dark" />
+        <View className="flex-1 bg-white" style={{ paddingTop: insets.top }}>
+          <View className="flex-1 bg-gray-50 justify-center items-center px-6">
           <Text className="text-xl font-bold text-gray-900 mb-2">
             No Quiz Session
           </Text>
@@ -205,8 +218,9 @@ export default function QuizSessionScreen() {
           >
             Go Back
           </Button>
+          </View>
         </View>
-      </SafeAreaView>
+      </>
     );
   }
 
@@ -218,16 +232,14 @@ export default function QuizSessionScreen() {
   return (
     <>
       <Stack.Screen options={{ headerShown: false }} />
-      <SafeAreaView className="flex-1 bg-gray-50" edges={[]}>
-        {/* Custom Header */}
-        <View className="bg-white border-b border-gray-100">
-          {/* Status Bar Area */}
-          <View className="pt-12 pb-2">
-            <View className="h-6" />
-          </View>
+      <StatusBar style="dark" />
+      <View className="flex-1 bg-white" style={{ paddingTop: insets.top }}>
+        <View className="flex-1 bg-gray-50">
+          {/* Custom Header */}
+          <View className="bg-white border-b border-gray-100">
 
           {/* Header Controls */}
-          <View className="px-6 pb-4">
+          <View className="px-6 py-4">
             <View className="flex-row items-center justify-between">
               <TouchableOpacity
                 onPress={handleBack}
@@ -305,7 +317,8 @@ export default function QuizSessionScreen() {
             </View>
           </View>
         </View>
-      </SafeAreaView>
+        </View>
+      </View>
     </>
   );
 }

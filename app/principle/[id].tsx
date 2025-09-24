@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react';
-import { View, ScrollView, Text, TouchableOpacity } from 'react-native';
+import { View, ScrollView, Text, TouchableOpacity, Linking } from 'react-native';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { useLocalSearchParams, useRouter, Stack } from 'expo-router';
 import { StatusBar } from 'expo-status-bar';
@@ -127,7 +127,7 @@ export default function PrincipleDetailScreen() {
               {principle.do.map((item, index) => (
                 <View key={index} className="flex-row items-start">
                   <Text className="text-green-500 text-lg mr-3 mt-0.5">•</Text>
-                  <Text className="flex-1 text-base text-gray-700 leading-relaxed">
+                  <Text className="flex-1 text-lg text-gray-700 leading-relaxed">
                     {item}
                   </Text>
                 </View>
@@ -146,7 +146,7 @@ export default function PrincipleDetailScreen() {
               {principle.dont.map((item, index) => (
                 <View key={index} className="flex-row items-start">
                   <Text className="text-red-500 text-lg mr-3 mt-0.5">•</Text>
-                  <Text className="flex-1 text-base text-gray-700 leading-relaxed">
+                  <Text className="flex-1 text-lg text-gray-700 leading-relaxed">
                     {item}
                   </Text>
                 </View>
@@ -205,15 +205,33 @@ export default function PrincipleDetailScreen() {
             </Text>
             <View className="space-y-3">
               {principle.sources.map((source, index) => (
-                <TouchableOpacity 
+                <TouchableOpacity
                   key={index}
-                  className="flex-row items-center p-3 bg-gray-50 rounded-lg"
+                  className="flex-row items-center p-4 bg-gray-50 rounded-lg"
                   activeOpacity={0.7}
+                  onPress={async () => {
+                    if (source.startsWith('http')) {
+                      try {
+                        const canOpen = await Linking.canOpenURL(source);
+                        if (canOpen) {
+                          await Linking.openURL(source);
+                        } else {
+                          console.log('Cannot open URL:', source);
+                        }
+                      } catch (error) {
+                        console.error('Error opening URL:', source, error);
+                      }
+                    } else {
+                      console.log('Not a URL:', source);
+                    }
+                  }}
                 >
-                  <Text className="text-blue-500 text-base mr-3">🔗</Text>
-                  <Text 
-                    className="flex-1 text-base text-blue-600 underline"
-                    numberOfLines={1}
+                  <Text className="text-blue-500 text-base mr-3">
+                    {source.startsWith('http') ? '🔗' : '📚'}
+                  </Text>
+                  <Text
+                    className={`flex-1 text-base ${source.startsWith('http') ? 'text-blue-600 underline' : 'text-gray-700'}`}
+                    numberOfLines={source.startsWith('http') ? 1 : undefined}
                   >
                     {source}
                   </Text>

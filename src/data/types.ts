@@ -1,5 +1,7 @@
 export type PrincipleType = "ux_law" | "cognitive_bias" | "heuristic";
 
+export type QuizLength = 'quick' | 'standard' | 'complete' | 'marathon';
+
 export interface Principle {
   id: string;
   type: PrincipleType;
@@ -50,6 +52,7 @@ export interface QuizSession {
   endTime?: Date;
   score: number;
   mode: 'all' | 'favorites';
+  length: QuizLength;
   principlesUsed: string[];
 }
 

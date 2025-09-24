@@ -1,10 +1,11 @@
 import { create } from 'zustand';
-import { QuizSession, QuizQuestion, QuizAnswer, QuizResult, Principle } from '../data/types';
+import { QuizSession, QuizQuestion, QuizAnswer, QuizResult, Principle, QuizLength } from '../data/types';
 import { generateQuizQuestions, getFallbackQuizQuestions } from '../lib/openai';
 import { storage } from '../lib/storage';
 import { SyncService } from '../lib/syncService';
 import { QuestionCacheService } from '../lib/questionCache';
 import { config } from '../lib/config';
+import { getQuestionCount } from '../lib/quiz-config';
 
 interface QuizState {
   // Current session state
@@ -21,7 +22,7 @@ interface QuizState {
   syncError: string | null;
   
   // Actions
-  startNewQuiz: (principles: Principle[], mode: 'all' | 'favorites') => Promise<void>;
+  startNewQuiz: (principles: Principle[], mode: 'all' | 'favorites', length: QuizLength) => Promise<void>;
   answerQuestion: (questionId: string, selectedAnswer: number) => void;
   goToQuestion: (index: number) => void;
   submitQuiz: () => QuizResult | null;
@@ -49,21 +50,21 @@ export const useQuiz = create<QuizState>((set, get) => ({
   lastSyncTime: null,
   syncError: null,
 
-  startNewQuiz: async (principles: Principle[], mode: 'all' | 'favorites') => {
+  startNewQuiz: async (principles: Principle[], mode: 'all' | 'favorites', length: QuizLength) => {
     set({ isLoading: true, error: null });
-    
+
     try {
       let questions: QuizQuestion[];
-      
+
       try {
         // Try to generate questions using OpenAI
-        questions = await generateQuizQuestions(principles);
+        questions = await generateQuizQuestions(principles, length);
       } catch (apiError) {
         console.warn('OpenAI API failed, using fallback questions:', apiError);
         // Fall back to simple questions if API fails
-        questions = getFallbackQuizQuestions(principles);
+        questions = getFallbackQuizQuestions(principles, length);
       }
-      
+
       const newSession: QuizSession = {
         id: `quiz_${Date.now()}`,
         questions,
@@ -72,20 +73,21 @@ export const useQuiz = create<QuizState>((set, get) => ({
         startTime: new Date(),
         score: 0,
         mode,
+        length,
         principlesUsed: questions.map(q => q.principleId),
       };
-      
-      set({ 
+
+      set({
         currentSession: newSession,
         isLoading: false,
-        error: null 
+        error: null
       });
-      
+
     } catch (error) {
       console.error('Failed to start quiz:', error);
-      set({ 
-        isLoading: false, 
-        error: error instanceof Error ? error.message : 'Failed to generate quiz questions' 
+      set({
+        isLoading: false,
+        error: error instanceof Error ? error.message : 'Failed to generate quiz questions'
       });
     }
   },

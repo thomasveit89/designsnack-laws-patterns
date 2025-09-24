@@ -1,26 +1,35 @@
-import { Principle, QuizQuestion } from '../data/types';
+import { Principle, QuizQuestion, QuizLength } from '../data/types';
 import { ApiService } from './api';
 import { QuestionCacheService } from './questionCache';
+import { getQuestionCount } from './quiz-config';
 
 /**
  * Generate quiz questions using the backend API
  * Falls back to cached questions if API is unavailable
  */
-export async function generateQuizQuestions(principles: Principle[]): Promise<QuizQuestion[]> {
-  // Select 10 random principles for the quiz
-  const selectedPrinciples = principles
-    .sort(() => Math.random() - 0.5)
-    .slice(0, 10);
+export async function generateQuizQuestions(principles: Principle[], length: QuizLength): Promise<QuizQuestion[]> {
+  const requestedCount = getQuestionCount(length);
+
+  // For marathon mode, use all available principles; for others, select randomly
+  let selectedPrinciples: Principle[];
+  if (length === 'marathon') {
+    selectedPrinciples = principles;
+  } else {
+    selectedPrinciples = principles
+      .sort(() => Math.random() - 0.5)
+      .slice(0, Math.min(requestedCount, principles.length));
+  }
 
   const principleIds = selectedPrinciples.map(p => p.id);
+  const actualCount = Math.min(requestedCount, selectedPrinciples.length);
 
   try {
-    console.log('🌐 Fetching questions from backend API...');
+    console.log(`🌐 Fetching ${actualCount} questions from backend API...`);
 
     // Try to get questions from backend API
     const response = await ApiService.getQuestions({
       principleIds,
-      limit: 10,
+      limit: actualCount,
       difficulty: 'medium'
     });
 
@@ -39,21 +48,27 @@ export async function generateQuizQuestions(principles: Principle[]): Promise<Qu
     console.warn('🔄 Backend API unavailable, falling back to cached questions...');
 
     // Try to use cached questions first
-    const cachedQuestions = QuestionCacheService.getRandomCachedQuestions(principleIds, 10);
-    if (cachedQuestions.length >= 10) {
+    const cachedQuestions = QuestionCacheService.getRandomCachedQuestions(principleIds, actualCount);
+    if (cachedQuestions.length >= actualCount) {
       console.log(`📦 Using ${cachedQuestions.length} cached questions`);
       return cachedQuestions;
     }
 
     // If no cached questions available, use fallback questions
     console.warn('⚠️ No cached questions available, using fallback questions');
-    return getFallbackQuizQuestions(selectedPrinciples);
+    return getFallbackQuizQuestions(selectedPrinciples, length);
   }
 }
 
 // Fallback quiz questions in case API fails
-export function getFallbackQuizQuestions(principles: Principle[]): QuizQuestion[] {
-  const selectedPrinciples = principles.slice(0, 10);
+export function getFallbackQuizQuestions(principles: Principle[], length: QuizLength): QuizQuestion[] {
+  const requestedCount = getQuestionCount(length);
+  const actualCount = Math.min(requestedCount, principles.length);
+
+  // For marathon mode, use all principles; for others, use requested amount
+  const selectedPrinciples = length === 'marathon'
+    ? principles
+    : principles.slice(0, actualCount);
 
   return selectedPrinciples.map((principle, index) => {
     // Create the options array

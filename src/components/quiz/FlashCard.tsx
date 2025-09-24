@@ -1,8 +1,8 @@
 import React, { useState, forwardRef, useEffect } from 'react';
 import { View, Text, TouchableOpacity } from 'react-native';
-import Animated, { 
-  useSharedValue, 
-  useAnimatedStyle, 
+import Animated, {
+  useSharedValue,
+  useAnimatedStyle,
   withTiming,
   interpolate,
   runOnJS
@@ -35,7 +35,7 @@ export const FlashCard = forwardRef<View, FlashCardProps>(({ principle, classNam
   const handleFlip = () => {
     // Haptic feedback
     Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light);
-    
+
     // Animate flip
     flipAnimation.value = withTiming(isFlipped ? 0 : 1, { duration: 600 }, () => {
       runOnJS(setIsFlipped)(!isFlipped);
@@ -46,7 +46,7 @@ export const FlashCard = forwardRef<View, FlashCardProps>(({ principle, classNam
   const frontAnimatedStyle = useAnimatedStyle(() => {
     const rotateY = interpolate(flipAnimation.value, [0, 1], [0, 90]);
     const opacity = interpolate(flipAnimation.value, [0, 0.5, 1], [1, 0, 0]);
-    
+
     return {
       transform: [{ rotateY: `${rotateY}deg` }],
       opacity,
@@ -58,7 +58,7 @@ export const FlashCard = forwardRef<View, FlashCardProps>(({ principle, classNam
   const backAnimatedStyle = useAnimatedStyle(() => {
     const rotateY = interpolate(flipAnimation.value, [0, 1], [90, 0]);
     const opacity = interpolate(flipAnimation.value, [0, 0.5, 1], [0, 0, 1]);
-    
+
     return {
       transform: [{ rotateY: `${rotateY}deg` }],
       opacity,
@@ -67,50 +67,42 @@ export const FlashCard = forwardRef<View, FlashCardProps>(({ principle, classNam
   });
 
   return (
-    <TouchableOpacity 
+    <TouchableOpacity
       ref={ref}
       onPress={handleFlip}
       activeOpacity={0.9}
       className={`relative ${className}`}
     >
       {/* Front Side */}
-      <Animated.View 
+      <Animated.View
         style={[frontAnimatedStyle]}
         className="absolute inset-0 bg-white rounded-2xl p-6 shadow-lg border border-gray-100"
       >
         <View className="flex-1 items-center justify-center">
           {/* Emoji */}
-          <Text 
+          <Text
             className="text-6xl mb-4"
             style={{ lineHeight: 72, includeFontPadding: false }}
           >
             {emoji}
           </Text>
-          
+
           {/* Title */}
           <Text className="text-2xl font-bold text-gray-900 text-center mb-4">
             {principle.title}
           </Text>
-          
+
           {/* Type Badge */}
           <View className="bg-brand-primary/10 px-3 py-1.5 rounded-full mb-6">
             <Text className="text-sm font-medium text-brand-primary">
               {getTypeLabel(principle.type)}
             </Text>
           </View>
-
-          {/* Flip Hint */}
-          <View className="flex-row items-center">
-            <Text className="text-base text-gray-500 mr-2">
-              Tap to reveal
-            </Text>
-            <Text className="text-lg">🔄</Text>
-          </View>
         </View>
       </Animated.View>
 
       {/* Back Side */}
-      <Animated.View 
+      <Animated.View
         style={[backAnimatedStyle]}
         className="absolute inset-0 bg-white rounded-2xl p-6 shadow-lg border border-gray-100"
       >
@@ -120,7 +112,7 @@ export const FlashCard = forwardRef<View, FlashCardProps>(({ principle, classNam
             <Text className="text-xl font-bold text-gray-900 text-center mb-2">
               {principle.title}
             </Text>
-            <CategoryChip 
+            <CategoryChip
               category={principle.category}
               size="sm"
             />
@@ -134,7 +126,7 @@ export const FlashCard = forwardRef<View, FlashCardProps>(({ principle, classNam
           </View>
 
           {/* Definition */}
-          <Text className="text-base text-gray-700 leading-relaxed mb-6 flex-1">
+          <Text className="text-lg text-gray-700 leading-relaxed mb-6 flex-1">
             {principle.definition}
           </Text>
 
@@ -146,21 +138,13 @@ export const FlashCard = forwardRef<View, FlashCardProps>(({ principle, classNam
               </Text>
               <View>
                 {principle.do.slice(0, 2).map((item, index) => (
-                  <Text key={index} className="text-sm text-gray-600 mb-1">
+                  <Text key={index} className="text-lg text-gray-600 mb-1">
                     • {item}
                   </Text>
                 ))}
               </View>
             </View>
           )}
-
-          {/* Flip Hint */}
-          <View className="flex-row items-center justify-center">
-            <Text className="text-sm text-gray-500 mr-2">
-              Tap to flip back
-            </Text>
-            <Text className="text-base">🔄</Text>
-          </View>
         </View>
       </Animated.View>
 

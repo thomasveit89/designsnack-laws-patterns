@@ -8,11 +8,12 @@ import { QuizQuestion } from '@/src/components/quiz/QuizQuestion';
 import { useQuiz } from '@/src/store/useQuiz';
 import { usePrinciples } from '@/src/store/usePrinciples';
 import { useFavorites } from '@/src/store/useFavorites';
+import { QuizLength } from '@/src/data/types';
 
 export default function QuizSessionScreen() {
   const router = useRouter();
   const insets = useSafeAreaInsets();
-  const { mode } = useLocalSearchParams<{ mode: 'all' | 'favorites' }>();
+  const { mode, length } = useLocalSearchParams<{ mode: 'all' | 'favorites'; length: string }>();
   const { principles } = usePrinciples();
   const { getFavoriteIds } = useFavorites();
   const {
@@ -56,7 +57,7 @@ export default function QuizSessionScreen() {
       return;
     }
 
-    await startNewQuiz(filtered, mode || 'all');
+    await startNewQuiz(filtered, mode || 'all', length as QuizLength || 'standard');
   };
 
   const handleBack = () => {

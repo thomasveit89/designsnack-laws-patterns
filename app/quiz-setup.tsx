@@ -42,20 +42,20 @@ export default function QuizSetupScreen() {
         <View className="flex-1 bg-gray-50">
           {/* Header */}
           <View className="flex-row items-center justify-between px-6 py-4 bg-white border-b border-gray-100">
-          <TouchableOpacity
-            onPress={handleBack}
-            className="flex-row items-center"
-          >
-            <Text className="text-2xl mr-2">←</Text>
-            <Text className="text-lg font-medium text-gray-700">Back</Text>
-          </TouchableOpacity>
+            <TouchableOpacity
+              onPress={handleBack}
+              className="flex-row items-center"
+            >
+              <Text className="text-2xl mr-2">←</Text>
+              <Text className="text-lg font-medium text-gray-700">Back</Text>
+            </TouchableOpacity>
 
-          <Text className="text-lg font-semibold text-gray-900">
-            Take a Quiz
-          </Text>
+            <Text className="text-lg font-semibold text-gray-900">
+              Take a Quiz
+            </Text>
 
-          <View className="w-16" />
-        </View>
+            <View className="w-16" />
+          </View>
 
           <ScrollView
             className="flex-1"
@@ -84,9 +84,8 @@ export default function QuizSetupScreen() {
                   activeOpacity={0.8}
                   className="flex-1"
                 >
-                  <View className={`rounded-2xl p-4 shadow-sm border ${
-                    selectedMode === 'all' ? 'border-blue-500 bg-blue-50' : 'border-gray-100 bg-white'
-                  }`}>
+                  <View className={`rounded-2xl p-4 shadow-sm border ${selectedMode === 'all' ? 'border-blue-500 bg-blue-50' : 'border-gray-100 bg-white'
+                    }`}>
                     <View className="items-center">
                       <Text className="text-3xl mb-2">📚</Text>
                       <Text className="text-lg font-bold text-gray-900 mb-1">
@@ -108,13 +107,12 @@ export default function QuizSetupScreen() {
                   disabled={favoriteCount === 0}
                   className="flex-1"
                 >
-                  <View className={`rounded-2xl p-4 shadow-sm border ${
-                    favoriteCount === 0
-                      ? 'border-gray-100 bg-white opacity-50'
-                      : selectedMode === 'favorites'
+                  <View className={`rounded-2xl p-4 shadow-sm border ${favoriteCount === 0
+                    ? 'border-gray-100 bg-white opacity-50'
+                    : selectedMode === 'favorites'
                       ? 'border-blue-500 bg-blue-50'
                       : 'border-gray-100 bg-white'
-                  }`}>
+                    }`}>
                     <View className="items-center">
                       <Text className="text-3xl mb-2">⭐</Text>
                       <Text className="text-lg font-bold text-gray-900 mb-1">
@@ -132,7 +130,7 @@ export default function QuizSetupScreen() {
             </View>
 
             {/* Quiz Length Cards */}
-            <View className="mb-8">
+            <View>
               <Text className="text-lg font-semibold text-gray-900 mb-4">
                 Choose Quiz Length
               </Text>
@@ -149,13 +147,12 @@ export default function QuizSetupScreen() {
                       activeOpacity={0.8}
                       disabled={isDisabled}
                     >
-                      <View className={`rounded-2xl p-4 shadow-sm border ${
-                        isDisabled
-                          ? 'border-gray-100 bg-white opacity-50'
-                          : selectedLength === length
+                      <View className={`rounded-2xl p-4 mb-2 shadow-sm border ${isDisabled
+                        ? 'border-gray-100 bg-white opacity-50'
+                        : selectedLength === length
                           ? 'border-blue-500 bg-blue-50'
                           : 'border-gray-100 bg-white'
-                      }`}>
+                        }`}>
                         <View className="flex-row items-center">
                           <Text className="text-2xl mr-3">{config.emoji}</Text>
                           <View className="flex-1">
@@ -166,20 +163,18 @@ export default function QuizSetupScreen() {
                               {config.description}
                             </Text>
                           </View>
-                          <View className={`px-3 py-1 rounded-full ${
-                            isDisabled
-                              ? 'bg-gray-100'
-                              : selectedLength === length
+                          <View className={`px-3 py-1 rounded-full ${isDisabled
+                            ? 'bg-gray-100'
+                            : selectedLength === length
                               ? 'bg-blue-100'
                               : 'bg-gray-100'
-                          }`}>
-                            <Text className={`text-sm font-medium ${
-                              isDisabled
-                                ? 'text-gray-500'
-                                : selectedLength === length
+                            }`}>
+                            <Text className={`text-sm font-medium ${isDisabled
+                              ? 'text-gray-500'
+                              : selectedLength === length
                                 ? 'text-blue-700'
                                 : 'text-gray-700'
-                            }`}>
+                              }`}>
                               {questionCount} questions
                             </Text>
                           </View>
@@ -192,16 +187,16 @@ export default function QuizSetupScreen() {
             </View>
 
             {/* Start Button */}
-            <View className="mt-6">
-            <Button
-              variant="primary"
-              size="lg"
-              onPress={handleStartQuiz}
-              className="w-full"
-              disabled={availableCount === 0}
-            >
-              Start Quiz ({actualQuestionCount} questions)
-            </Button>
+            <View className="mt-3">
+              <Button
+                variant="primary"
+                size="lg"
+                onPress={handleStartQuiz}
+                className="w-full"
+                disabled={availableCount === 0}
+              >
+                Start Quiz ({actualQuestionCount} questions)
+              </Button>
             </View>
           </ScrollView>
         </View>

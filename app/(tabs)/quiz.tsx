@@ -64,7 +64,7 @@ export default function PracticeScreen() {
                 Take a Quiz
               </Text>
               <Text className="text-base text-gray-600 text-center">
-                Test your knowledge with AI-generated questions. 10 questions, multiple choice format.
+                Test your knowledge with AI-generated questions. Choose from Quick (10), Standard (25), Complete (50), or Marathon (all 103) quiz lengths.
               </Text>
             </View>
             <Button

@@ -14,7 +14,7 @@ module.exports = {
         },
         categories: {
           attention: '#EF4444',
-          memory: '#8B5CF6', 
+          memory: '#8B5CF6',
           decisions: '#10B981',
           usability: '#F59E0B',
         }

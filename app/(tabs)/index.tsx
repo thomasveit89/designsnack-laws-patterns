@@ -40,6 +40,49 @@ export default function LibraryScreen() {
     loadFavorites();
   }, [loadPrinciples, loadFavorites]);
 
+  // Helper function to get category counts
+  const getCategoryCount = (categoryLabel: string) => {
+    if (categoryLabel === 'All') {
+      return searchQuery.trim() ?
+        principles.filter(principle =>
+          principle.title.toLowerCase().includes(searchQuery.toLowerCase().trim()) ||
+          principle.oneLiner.toLowerCase().includes(searchQuery.toLowerCase().trim()) ||
+          principle.definition.toLowerCase().includes(searchQuery.toLowerCase().trim()) ||
+          principle.tags.some(tag => tag.toLowerCase().includes(searchQuery.toLowerCase().trim()))
+        ).length : principles.length;
+    }
+
+    if (categoryLabel.startsWith('Favorites')) {
+      return getFavoriteCount();
+    }
+
+    const categoryMap: Record<string, string> = {
+      'Attention': 'attention',
+      'Memory': 'memory',
+      'Decision Making': 'decisions',
+      'Usability': 'usability',
+      'Persuasion': 'persuasion',
+      'Visual Design': 'visual'
+    };
+
+    const actualCategory = categoryMap[categoryLabel];
+    if (!actualCategory) return 0;
+
+    let categoryPrinciples = principles.filter(principle => principle.category === actualCategory);
+
+    if (searchQuery.trim()) {
+      const query = searchQuery.toLowerCase().trim();
+      categoryPrinciples = categoryPrinciples.filter(principle =>
+        principle.title.toLowerCase().includes(query) ||
+        principle.oneLiner.toLowerCase().includes(query) ||
+        principle.definition.toLowerCase().includes(query) ||
+        principle.tags.some(tag => tag.toLowerCase().includes(query))
+      );
+    }
+
+    return categoryPrinciples.length;
+  };
+
   // Filter and search principles
   const filteredPrinciples = useMemo(() => {
     let filtered = [...principles];
@@ -108,7 +151,7 @@ export default function LibraryScreen() {
   );
 
   const renderItem = ({ item }: { item: Principle }) => (
-    <View className="px-5 mb-3">
+    <View className="px-5 mb-0">
       <PrincipleListCard
         principle={item}
         onPress={() => handlePrinciplePress(item)}
@@ -180,10 +223,10 @@ export default function LibraryScreen() {
       {/* Animated Header */}
       <Animated.View
         style={[headerAnimatedStyle, { paddingTop: insets.top }]}
-        className="absolute top-0 left-0 right-0 z-10 bg-gray-50 border-b border-gray-200"
+        className="absolute top-0 left-0 right-0 z-10 bg-gray-50"
         onLayout={onHeaderLayout}
       >
-        <View className="px-5 pb-4 pt-6">
+        <View className="px-5 pb-0 pt-6">
           {/* Header */}
           <View className="mb-6">
             <Text className="text-2xl font-bold text-gray-900 mb-2">
@@ -206,12 +249,12 @@ export default function LibraryScreen() {
           <ScrollView
             horizontal
             showsHorizontalScrollIndicator={false}
-            className="mb-4"
+            className="mb-6"
             contentContainerStyle={{ paddingHorizontal: 0 }}
           >
             <View className="flex-row gap-2">
               <CategoryChip
-                category="All"
+                category={`All (${getCategoryCount('All')})`}
                 size="md"
                 selected={categoryFilter === 'all'}
                 onPress={() => setCategoryFilter('all')}
@@ -222,27 +265,20 @@ export default function LibraryScreen() {
                 selected={categoryFilter === 'favorites'}
                 onPress={() => setCategoryFilter('favorites')}
               />
-              {categoriesData.map((category) => (
-                <CategoryChip
-                  key={category.id}
-                  category={category.label}
-                  size="md"
-                  selected={categoryFilter === category.label}
-                  onPress={() => setCategoryFilter(category.label)}
-                />
-              ))}
+              {categoriesData.map((category) => {
+                const count = getCategoryCount(category.label);
+                return (
+                  <CategoryChip
+                    key={category.id}
+                    category={`${category.label} (${count})`}
+                    size="md"
+                    selected={categoryFilter === category.label}
+                    onPress={() => setCategoryFilter(category.label)}
+                  />
+                );
+              })}
             </View>
           </ScrollView>
-
-          {/* Results Count */}
-          <View className="mb-4">
-            <Text className="text-sm text-gray-500">
-              {filteredPrinciples.length} principle{filteredPrinciples.length !== 1 ? 's' : ''}
-              {searchQuery && ` matching "${searchQuery}"`}
-              {categoryFilter === 'favorites' && ` in Favorites`}
-              {categoryFilter !== 'all' && categoryFilter !== 'favorites' && ` in ${categoryFilter}`}
-            </Text>
-          </View>
         </View>
       </Animated.View>
 
@@ -256,7 +292,7 @@ export default function LibraryScreen() {
         scrollEventThrottle={16}
         showsVerticalScrollIndicator={false}
         contentContainerStyle={{
-          paddingTop: 230 + insets.top, // Space for header + safe area
+          paddingTop: 170 + insets.top, // Space for header + safe area
           paddingBottom: Math.max(insets.bottom, 20)
         }}
         initialNumToRender={10}

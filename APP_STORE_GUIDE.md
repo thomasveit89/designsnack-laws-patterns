@@ -7,7 +7,7 @@
 
 ## 🎯 **Overview**
 
-Your DESIGNSNACK Laws & Patterns app is an educational tool featuring 103 UX principles across 6 categories with interactive quizzes and flashcards. This guide covers everything needed for successful app store publication.
+Your DESIGNSNACK Laws & Patterns app is an educational tool featuring 102 UX principles across 6 categories with interactive quizzes and flashcards. This guide covers everything needed for successful app store publication.
 
 ---
 

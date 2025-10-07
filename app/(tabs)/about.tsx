@@ -57,7 +57,7 @@ export default function AboutScreen() {
               Laws & Patterns
             </Text>
             <Text className="text-base text-gray-600 text-center">
-              Master 103 essential UX design principles through interactive learning
+              Master 100+ essential UX design principles through interactive learning
             </Text>
           </View>
         </View>
@@ -71,7 +71,7 @@ export default function AboutScreen() {
             <View className="flex-row items-start mb-2">
               <Text className="text-blue-500 text-base mr-3 mt-1">📖</Text>
               <View className="flex-1">
-                <Text className="text-base font-medium text-gray-900">103 UX Principles</Text>
+                <Text className="text-base font-medium text-gray-900">100+ UX Principles</Text>
                 <Text className="text-base text-gray-600">Laws, cognitive biases, and design heuristics</Text>
               </View>
             </View>

@@ -19,11 +19,12 @@ export const useFavorites = create<FavoritesStore>((set, get) => ({
   favorites: new Set(),
   isLoading: false,
 
-  loadFavorites: () => {
+  loadFavorites: async () => {
     set({ isLoading: true });
     try {
-      const favorites = favoritesStorage.get();
+      const favorites = await favoritesStorage.getAsync();
       set({ favorites, isLoading: false });
+      console.log('📚 Loaded favorites:', favorites.size, 'items');
     } catch (error) {
       console.error('Failed to load favorites:', error);
       set({ isLoading: false });

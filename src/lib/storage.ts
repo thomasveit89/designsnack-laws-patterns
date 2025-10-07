@@ -11,21 +11,12 @@ interface StorageInterface {
 // AsyncStorage wrapper to match MMKV interface
 class AsyncStorageWrapper implements StorageInterface {
   private cache = new Map<string, string>();
+  private isInitialized = false;
+  private initPromise: Promise<void> | null = null;
 
   getString(key: string): string | null {
     // Return from cache if available (synchronous)
-    if (this.cache.has(key)) {
-      return this.cache.get(key) || null;
-    }
-    
-    // Load asynchronously and cache for next time
-    AsyncStorage.getItem(key).then(value => {
-      if (value) {
-        this.cache.set(key, value);
-      }
-    }).catch(() => {});
-    
-    return null;
+    return this.cache.get(key) || null;
   }
 
   set(key: string, value: string): void {
@@ -45,24 +36,52 @@ class AsyncStorageWrapper implements StorageInterface {
 
   // Initialize cache from AsyncStorage
   async initialize(): Promise<void> {
-    try {
-      const keys = await AsyncStorage.getAllKeys();
-      const items = await AsyncStorage.multiGet(keys);
-      items.forEach(([key, value]) => {
-        if (value) {
-          this.cache.set(key, value);
-        }
-      });
-    } catch (error) {
-      console.warn('Failed to initialize storage cache:', error);
+    // Return existing promise if already initializing
+    if (this.initPromise) {
+      return this.initPromise;
     }
+
+    // Return immediately if already initialized
+    if (this.isInitialized) {
+      return Promise.resolve();
+    }
+
+    this.initPromise = (async () => {
+      try {
+        const keys = await AsyncStorage.getAllKeys();
+        const items = await AsyncStorage.multiGet(keys);
+        items.forEach(([key, value]) => {
+          if (value) {
+            this.cache.set(key, value);
+          }
+        });
+        this.isInitialized = true;
+        console.log('✅ Storage initialized with', this.cache.size, 'items');
+      } catch (error) {
+        console.warn('Failed to initialize storage cache:', error);
+      } finally {
+        this.initPromise = null;
+      }
+    })();
+
+    return this.initPromise;
+  }
+
+  // Check if storage is ready
+  isReady(): boolean {
+    return this.isInitialized;
+  }
+
+  // Wait for storage to be ready
+  async waitForReady(): Promise<void> {
+    return this.initialize();
   }
 }
 
 // Use AsyncStorage for Expo Go compatibility
 const storage = new AsyncStorageWrapper();
 
-// Initialize storage cache
+// Initialize storage cache (non-blocking)
 storage.initialize();
 
 // Storage keys
@@ -79,6 +98,12 @@ export const STORAGE_KEYS = {
 // Favorites management
 export const favoritesStorage = {
   get: (): Set<string> => {
+    const favorites = storage.getString(STORAGE_KEYS.FAVORITES);
+    return favorites ? new Set(JSON.parse(favorites)) : new Set();
+  },
+
+  getAsync: async (): Promise<Set<string>> => {
+    await storage.waitForReady();
     const favorites = storage.getString(STORAGE_KEYS.FAVORITES);
     return favorites ? new Set(JSON.parse(favorites)) : new Set();
   },

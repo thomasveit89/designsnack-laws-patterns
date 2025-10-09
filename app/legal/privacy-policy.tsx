@@ -37,7 +37,7 @@ export default function PrivacyPolicyScreen() {
 
         {/* WebView for Privacy Policy */}
         <WebView
-          source={{ uri: 'https://designsnack.ch/privacy/laws-patterns-app' }}
+          source={{ uri: 'https://designsnack.ch/laws-and-patterns/privacy' }}
           style={{ flex: 1 }}
           startInLoadingState={true}
           renderLoading={() => (

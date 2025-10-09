@@ -1,42 +1,28 @@
-import { Tabs } from 'expo-router';
+import { NativeTabs, Icon, Label } from 'expo-router/unstable-native-tabs';
 import React from 'react';
-
-import { HapticTab } from '@/components/haptic-tab';
-import { IconSymbol } from '@/components/ui/icon-symbol';
-import { Colors } from '@/constants/theme';
-import { useColorScheme } from '@/hooks/use-color-scheme';
+import * as Haptics from 'expo-haptics';
 
 export default function TabLayout() {
-  const colorScheme = useColorScheme();
+  const handlePress = () => {
+    Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light);
+  };
 
   return (
-    <Tabs
-      screenOptions={{
-        tabBarActiveTintColor: Colors[colorScheme ?? 'light'].tint,
-        headerShown: false,
-        tabBarButton: HapticTab,
-      }}>
-      <Tabs.Screen
-        name="index"
-        options={{
-          title: 'Library',
-          tabBarIcon: ({ color }) => <IconSymbol size={28} name="books.vertical.fill" color={color} />,
-        }}
-      />
-      <Tabs.Screen
-        name="quiz"
-        options={{
-          title: 'Practice',
-          tabBarIcon: ({ color }) => <IconSymbol size={28} name="brain.head.profile" color={color} />,
-        }}
-      />
-      <Tabs.Screen
-        name="about"
-        options={{
-          title: 'About',
-          tabBarIcon: ({ color }) => <IconSymbol size={28} name="info.circle" color={color} />,
-        }}
-      />
-    </Tabs>
+    <NativeTabs>
+      <NativeTabs.Trigger name="index" onPress={handlePress}>
+        <Label>Library</Label>
+        <Icon sf="books.vertical.fill" />
+      </NativeTabs.Trigger>
+
+      <NativeTabs.Trigger name="quiz" onPress={handlePress}>
+        <Label>Practice</Label>
+        <Icon sf="lightbulb" />
+      </NativeTabs.Trigger>
+
+      <NativeTabs.Trigger name="about" onPress={handlePress}>
+        <Label>About</Label>
+        <Icon sf="info.circle" />
+      </NativeTabs.Trigger>
+    </NativeTabs>
   );
 }

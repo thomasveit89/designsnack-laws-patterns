@@ -37,7 +37,7 @@ export default function TermsOfServiceScreen() {
 
         {/* WebView for Terms of Service */}
         <WebView
-          source={{ uri: 'https://designsnack.ch/terms/laws-patterns-app' }}
+          source={{ uri: 'https://designsnack.ch/laws-and-patterns/terms' }}
           style={{ flex: 1 }}
           startInLoadingState={true}
           renderLoading={() => (

@@ -57,6 +57,14 @@
           "resizeMode": "native",
           "backgroundColor": "#1E88BC"
         }
+      ],
+      [
+        "expo-build-properties",
+        {
+          "ios": {
+            "buildReactNativeFromSource": false
+          }
+        }
       ]
     ],
     "experiments": {

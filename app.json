@@ -16,8 +16,6 @@
     "ios": {
       "supportsTablet": true,
       "newArchEnabled": false,
-      "statusBarStyle": "dark",
-      "statusBarTranslucent": true,
       "splash": {
         "image": "./assets/splash-screens/splash-ios.png",
         "resizeMode": "cover",
@@ -65,7 +63,8 @@
             "buildReactNativeFromSource": true
           }
         }
-      ]
+      ],
+      "expo-web-browser"
     ],
     "experiments": {
       "typedRoutes": true

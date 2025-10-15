@@ -1,23 +1,42 @@
-import { NativeTabs, Label, Icon } from 'expo-router/unstable-native-tabs';
+import { Tabs } from 'expo-router';
 import React from 'react';
 
+import { HapticTab } from '@/components/haptic-tab';
+import { IconSymbol } from '@/components/ui/icon-symbol';
+import { Colors } from '@/constants/theme';
+import { useColorScheme } from '@/hooks/use-color-scheme';
+
 export default function TabLayout() {
+  const colorScheme = useColorScheme();
+
   return (
-    <NativeTabs>
-      <NativeTabs.Trigger name="index">
-        <Label>Library</Label>
-        <Icon sf="books.vertical.fill" />
-      </NativeTabs.Trigger>
-
-      <NativeTabs.Trigger name="quiz">
-        <Label>Practice</Label>
-        <Icon sf="lightbulb" />
-      </NativeTabs.Trigger>
-
-      <NativeTabs.Trigger name="about">
-        <Label>About</Label>
-        <Icon sf="info.circle" />
-      </NativeTabs.Trigger>
-    </NativeTabs>
+    <Tabs
+      screenOptions={{
+        tabBarActiveTintColor: Colors[colorScheme ?? 'light'].tint,
+        headerShown: false,
+        tabBarButton: HapticTab,
+      }}>
+      <Tabs.Screen
+        name="index"
+        options={{
+          title: 'Library',
+          tabBarIcon: ({ color }) => <IconSymbol size={28} name="books.vertical.fill" color={color} />,
+        }}
+      />
+      <Tabs.Screen
+        name="quiz"
+        options={{
+          title: 'Practice',
+          tabBarIcon: ({ color }) => <IconSymbol size={28} name="lightbulb" color={color} />,
+        }}
+      />
+      <Tabs.Screen
+        name="about"
+        options={{
+          title: 'About',
+          tabBarIcon: ({ color }) => <IconSymbol size={28} name="info.circle" color={color} />,
+        }}
+      />
+    </Tabs>
   );
 }

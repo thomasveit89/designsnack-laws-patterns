@@ -3,7 +3,8 @@ import AsyncStorage from '@react-native-async-storage/async-storage';
 // Storage interface that works with both MMKV and AsyncStorage
 interface StorageInterface {
   getString(key: string): string | null;
-  set(key: string, value: string): void;
+  set(key: string, value: string | boolean): void;
+  getBoolean(key: string): boolean;
   delete(key: string): void;
   clearAll(): void;
 }
@@ -19,9 +20,15 @@ class AsyncStorageWrapper implements StorageInterface {
     return this.cache.get(key) || null;
   }
 
-  set(key: string, value: string): void {
-    this.cache.set(key, value);
-    AsyncStorage.setItem(key, value).catch(() => {});
+  getBoolean(key: string): boolean {
+    const value = this.cache.get(key);
+    return value === 'true' || value === '1';
+  }
+
+  set(key: string, value: string | boolean): void {
+    const stringValue = typeof value === 'boolean' ? (value ? 'true' : 'false') : value;
+    this.cache.set(key, stringValue);
+    AsyncStorage.setItem(key, stringValue).catch(() => {});
   }
 
   delete(key: string): void {

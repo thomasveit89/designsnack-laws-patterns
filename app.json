@@ -7,7 +7,7 @@
     "icon": "./assets/app-icons/ios/icon-1024.png",
     "scheme": "designsnacklawspatterns",
     "userInterfaceStyle": "automatic",
-    "newArchEnabled": false,
+    "newArchEnabled": true,
     "splash": {
       "image": "./assets/splash-screens/splash.png",
       "resizeMode": "cover",
@@ -15,7 +15,7 @@
     },
     "ios": {
       "supportsTablet": true,
-      "newArchEnabled": false,
+      "newArchEnabled": true,
       "splash": {
         "image": "./assets/splash-screens/splash-ios.png",
         "resizeMode": "cover",
@@ -38,7 +38,7 @@
       },
       "edgeToEdgeEnabled": true,
       "predictiveBackGestureEnabled": false,
-      "newArchEnabled": false,
+      "newArchEnabled": true,
       "package": "com.designsnack.lawspatterns"
     },
     "web": {
@@ -60,7 +60,10 @@
         "expo-build-properties",
         {
           "ios": {
-            "buildReactNativeFromSource": true
+            "newArchEnabled": true
+          },
+          "android": {
+            "newArchEnabled": true
           }
         }
       ],

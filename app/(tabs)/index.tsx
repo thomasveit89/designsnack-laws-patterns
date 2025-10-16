@@ -12,8 +12,10 @@ import { PrincipleListCard } from '@/src/components/library/PrincipleListCard';
 import { SearchInput } from '@/src/components/ui/SearchInput';
 import { CategoryChip } from '@/src/components/shared/CategoryChip';
 import { LoadingSkeletons } from '@/src/components/ui/SkeletonLoader';
+import { PremiumModal } from '@/src/components/PremiumModal';
 import { usePrinciples } from '@/src/store/usePrinciples';
 import { useFavorites } from '@/src/store/useFavorites';
+import { usePurchase, isPrincipleLocked } from '@/src/store/usePurchase';
 import { Principle } from '@/src/data/types';
 import categoriesData from '@/src/data/categories.json';
 
@@ -23,9 +25,11 @@ type CategoryFilter = 'all' | 'favorites' | string;
 export default function LibraryScreen() {
   const { principles, loadPrinciples, isLoading } = usePrinciples();
   const { loadFavorites, getFavoriteIds, getFavoriteCount } = useFavorites();
+  const { isPremium, initialize } = usePurchase();
   const [searchQuery, setSearchQuery] = useState('');
   const [categoryFilter, setCategoryFilter] = useState<CategoryFilter>('all');
   const [sortBy, setSortBy] = useState<SortOption>('alphabetical');
+  const [showPremiumModal, setShowPremiumModal] = useState(false);
   const router = useRouter();
   const insets = useSafeAreaInsets();
 
@@ -38,7 +42,8 @@ export default function LibraryScreen() {
   useEffect(() => {
     loadPrinciples();
     loadFavorites();
-  }, [loadPrinciples, loadFavorites]);
+    initialize();
+  }, [loadPrinciples, loadFavorites, initialize]);
 
   // Helper function to get category counts
   const getCategoryCount = (categoryLabel: string) => {
@@ -138,8 +143,13 @@ export default function LibraryScreen() {
     return filtered;
   }, [principles, searchQuery, categoryFilter, sortBy, getFavoriteIds]);
 
-  const handlePrinciplePress = (principle: Principle) => {
-    router.push(`/principle/${principle.id}`);
+  const handlePrinciplePress = (principle: Principle, index: number) => {
+    const isLocked = isPrincipleLocked(index, isPremium);
+    if (isLocked) {
+      setShowPremiumModal(true);
+    } else {
+      router.push(`/principle/${principle.id}`);
+    }
   };
 
   const renderPrinciple = ({ item }: { item: Principle }) => (
@@ -150,14 +160,18 @@ export default function LibraryScreen() {
     />
   );
 
-  const renderItem = ({ item }: { item: Principle }) => (
-    <View className="px-5 mb-0">
-      <PrincipleListCard
-        principle={item}
-        onPress={() => handlePrinciplePress(item)}
-      />
-    </View>
-  );
+  const renderItem = ({ item, index }: { item: Principle; index: number }) => {
+    const isLocked = isPrincipleLocked(index, isPremium);
+    return (
+      <View className="px-5 mb-0">
+        <PrincipleListCard
+          principle={item}
+          onPress={() => handlePrinciplePress(item, index)}
+          isLocked={isLocked}
+        />
+      </View>
+    );
+  };
 
   const renderEmptyState = () => (
     <View className="items-center justify-center py-12 px-5">
@@ -297,6 +311,11 @@ export default function LibraryScreen() {
         }}
         initialNumToRender={10}
         windowSize={10}
+      />
+
+      <PremiumModal
+        visible={showPremiumModal}
+        onClose={() => setShowPremiumModal(false)}
       />
     </SafeAreaView>
   );

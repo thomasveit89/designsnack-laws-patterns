@@ -7,6 +7,7 @@ import { Button } from '@/src/components/ui/Button';
 import { FlashCard } from '@/src/components/quiz/FlashCard';
 import { usePrinciples } from '@/src/store/usePrinciples';
 import { useFavorites } from '@/src/store/useFavorites';
+import { usePurchase, isPrincipleLocked } from '@/src/store/usePurchase';
 import { Principle } from '@/src/data/types';
 
 export default function FlashcardSessionScreen() {
@@ -15,24 +16,27 @@ export default function FlashcardSessionScreen() {
   const { mode } = useLocalSearchParams<{ mode: 'all' | 'favorites' }>();
   const { principles } = usePrinciples();
   const { getFavoriteIds } = useFavorites();
+  const { isPremium } = usePurchase();
 
   const [currentIndex, setCurrentIndex] = useState(0);
   const [sessionPrinciples, setSessionPrinciples] = useState<Principle[]>([]);
   const [cardResetTrigger, setCardResetTrigger] = useState(0);
 
   useEffect(() => {
-    // Filter principles based on mode
-    let filtered = [...principles];
+    // Filter out locked principles first (alphabetically sorted)
+    const sortedPrinciples = [...principles].sort((a, b) => a.title.localeCompare(b.title));
+    let filtered = sortedPrinciples.filter((_, index) => !isPrincipleLocked(index, isPremium));
 
+    // Then filter by mode
     if (mode === 'favorites') {
       const favoriteIds = getFavoriteIds();
-      filtered = principles.filter(p => favoriteIds.includes(p.id));
+      filtered = filtered.filter(p => favoriteIds.includes(p.id));
     }
 
     // Shuffle the principles for varied study experience
     const shuffled = [...filtered].sort(() => Math.random() - 0.5);
     setSessionPrinciples(shuffled);
-  }, [principles, mode, getFavoriteIds]);
+  }, [principles, mode, getFavoriteIds, isPremium]);
 
   const handlePrevious = () => {
     if (currentIndex > 0) {

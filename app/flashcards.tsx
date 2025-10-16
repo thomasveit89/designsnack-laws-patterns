@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useMemo } from 'react';
 import { Text, View, TouchableOpacity, ScrollView } from 'react-native';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { useRouter, Stack } from 'expo-router';
@@ -6,12 +6,14 @@ import { StatusBar } from 'expo-status-bar';
 import { Button } from '@/src/components/ui/Button';
 import { usePrinciples } from '@/src/store/usePrinciples';
 import { useFavorites } from '@/src/store/useFavorites';
+import { usePurchase, isPrincipleLocked } from '@/src/store/usePurchase';
 
 export default function FlashcardsScreen() {
   const router = useRouter();
   const insets = useSafeAreaInsets();
   const { principles, loadPrinciples } = usePrinciples();
   const { loadFavorites, getFavoriteIds, getFavoriteCount } = useFavorites();
+  const { isPremium } = usePurchase();
   const [selectedMode, setSelectedMode] = useState<'all' | 'favorites'>('all');
 
   useEffect(() => {
@@ -27,8 +29,17 @@ export default function FlashcardsScreen() {
     router.back();
   };
 
-  const favoriteCount = getFavoriteCount();
-  const principleCount = principles.length;
+  // Filter out locked principles
+  const availablePrinciples = useMemo(() => {
+    const sortedPrinciples = [...principles].sort((a, b) => a.title.localeCompare(b.title));
+    return sortedPrinciples.filter((_, index) => !isPrincipleLocked(index, isPremium));
+  }, [principles, isPremium]);
+
+  const favoriteIds = getFavoriteIds();
+  const favoriteCount = favoriteIds.filter(id =>
+    availablePrinciples.some(p => p.id === id)
+  ).length;
+  const principleCount = availablePrinciples.length;
   const studyCount = selectedMode === 'all' ? principleCount : favoriteCount;
 
   console.log('🔍 Flashcards state:', { selectedMode, favoriteCount, principleCount });

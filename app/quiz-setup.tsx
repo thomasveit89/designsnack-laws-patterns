@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useMemo } from 'react';
 import { View, Text, TouchableOpacity, ScrollView } from 'react-native';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { useRouter, Stack } from 'expo-router';
@@ -6,6 +6,7 @@ import { StatusBar } from 'expo-status-bar';
 import { Button } from '@/src/components/ui/Button';
 import { usePrinciples } from '@/src/store/usePrinciples';
 import { useFavorites } from '@/src/store/useFavorites';
+import { usePurchase, isPrincipleLocked } from '@/src/store/usePurchase';
 import { QuizLength } from '@/src/data/types';
 import { QUIZ_LENGTHS } from '@/src/lib/quiz-config';
 
@@ -13,6 +14,7 @@ export default function QuizSetupScreen() {
   const router = useRouter();
   const { principles } = usePrinciples();
   const { getFavoriteIds } = useFavorites();
+  const { isPremium } = usePurchase();
   const [selectedMode, setSelectedMode] = useState<'all' | 'favorites'>('all');
   const [selectedLength, setSelectedLength] = useState<QuizLength>('standard');
   const insets = useSafeAreaInsets();
@@ -25,9 +27,17 @@ export default function QuizSetupScreen() {
     router.push(`/quiz-session?mode=${selectedMode}&length=${selectedLength}`);
   };
 
+  // Filter out locked principles
+  const availablePrinciples = useMemo(() => {
+    const sortedPrinciples = [...principles].sort((a, b) => a.title.localeCompare(b.title));
+    return sortedPrinciples.filter((_, index) => !isPrincipleLocked(index, isPremium));
+  }, [principles, isPremium]);
+
   const favoriteIds = getFavoriteIds();
-  const favoriteCount = favoriteIds.length;
-  const principleCount = principles.length;
+  const favoriteCount = favoriteIds.filter(id =>
+    availablePrinciples.some(p => p.id === id)
+  ).length;
+  const principleCount = availablePrinciples.length;
 
   const availableCount = selectedMode === 'all' ? principleCount : favoriteCount;
   const requestedCount = QUIZ_LENGTHS[selectedLength].questions;

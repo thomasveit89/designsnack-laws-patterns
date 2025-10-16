@@ -8,6 +8,7 @@ import { QuizQuestion } from '@/src/components/quiz/QuizQuestion';
 import { useQuiz } from '@/src/store/useQuiz';
 import { usePrinciples } from '@/src/store/usePrinciples';
 import { useFavorites } from '@/src/store/useFavorites';
+import { usePurchase, isPrincipleLocked } from '@/src/store/usePurchase';
 import { QuizLength } from '@/src/data/types';
 
 export default function QuizSessionScreen() {
@@ -16,6 +17,7 @@ export default function QuizSessionScreen() {
   const { mode, length } = useLocalSearchParams<{ mode: 'all' | 'favorites'; length: string }>();
   const { principles } = usePrinciples();
   const { getFavoriteIds } = useFavorites();
+  const { isPremium } = usePurchase();
   const {
     currentSession,
     isLoading,
@@ -38,18 +40,20 @@ export default function QuizSessionScreen() {
   }, [hasStarted]);
 
   const initializeQuiz = async () => {
-    // Filter principles based on mode
-    let filtered = [...principles];
+    // Filter out locked principles first (alphabetically sorted)
+    const sortedPrinciples = [...principles].sort((a, b) => a.title.localeCompare(b.title));
+    let filtered = sortedPrinciples.filter((_, index) => !isPrincipleLocked(index, isPremium));
 
+    // Then filter by mode
     if (mode === 'favorites') {
       const favoriteIds = getFavoriteIds();
-      filtered = principles.filter(p => favoriteIds.includes(p.id));
+      filtered = filtered.filter(p => favoriteIds.includes(p.id));
     }
 
     if (filtered.length === 0) {
       Alert.alert(
         'No Principles Available',
-        mode === 'favorites' 
+        mode === 'favorites'
           ? 'You don\'t have any favorites yet. Please add some favorites first.'
           : 'No principles available for quiz.',
         [{ text: 'OK', onPress: () => router.back() }]

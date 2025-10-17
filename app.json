@@ -14,7 +14,7 @@
       "backgroundColor": "#ffffff"
     },
     "ios": {
-      "supportsTablet": true,
+      "supportsTablet": false,
       "newArchEnabled": true,
       "splash": {
         "image": "./assets/splash-screens/splash-ios.png",

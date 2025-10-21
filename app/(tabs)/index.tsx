@@ -166,8 +166,14 @@ export default function LibraryScreen() {
   };
 
   const renderListHeader = () => {
-    // Show banner if user is not premium and hasn't dismissed it
+    // Show banner if not premium AND not dismissed in current session
     const shouldShowBanner = !isPremium && !isBannerDismissed;
+
+    console.log('🎯 Banner Debug:', {
+      isPremium,
+      isBannerDismissed,
+      shouldShowBanner
+    });
 
     if (!shouldShowBanner) {
       return null;

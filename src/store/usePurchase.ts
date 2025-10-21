@@ -40,7 +40,7 @@ export const usePurchase = create<PurchaseStore>((set, get) => ({
   isLoading: false,
   isConnected: false,
   error: null,
-  isBannerDismissed: storage.getBoolean(BANNER_DISMISSED_KEY) || false,
+  isBannerDismissed: false, // Always starts as false - banner reappears on app restart!
 
   initialize: async () => {
     try {
@@ -48,13 +48,16 @@ export const usePurchase = create<PurchaseStore>((set, get) => ({
 
       // Check local storage first
       const localPurchase = storage.getBoolean(PURCHASE_KEY);
+      console.log('💾 Checking local purchase:', localPurchase);
       if (localPurchase) {
+        console.log('✅ Local purchase found - setting premium to true');
         set({ isPremium: true, isLoading: false });
         return;
       }
 
       // Development mode: check dev flag
       const devModePremium = storage.getBoolean(DEV_MODE_KEY);
+      console.log('🔧 Checking dev mode premium:', devModePremium);
       if (devModePremium) {
         console.log('🔓 Dev mode: Premium unlocked');
         set({ isPremium: true, isLoading: false });
@@ -63,8 +66,8 @@ export const usePurchase = create<PurchaseStore>((set, get) => ({
 
       // If IAP module not available (Expo Go), just finish loading
       if (!InAppPurchases) {
-        console.log('📱 Running in Expo Go - IAP not available');
-        set({ isLoading: false });
+        console.log('📱 Running in Expo Go - IAP not available, staying as free user');
+        set({ isPremium: false, isLoading: false });
         return;
       }
 
@@ -209,7 +212,8 @@ export const usePurchase = create<PurchaseStore>((set, get) => ({
   },
 
   dismissBanner: () => {
-    storage.set(BANNER_DISMISSED_KEY, true);
+    // Only dismiss for current session - doesn't persist across app restarts
+    console.log('🚫 Banner dismissed for this session');
     set({ isBannerDismissed: true });
   },
 }));

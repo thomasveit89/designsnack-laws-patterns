@@ -1,5 +1,6 @@
 import React from 'react';
 import { View, Text, TouchableOpacity } from 'react-native';
+import { LinearGradient } from 'expo-linear-gradient';
 import { IconSymbol } from '@/components/ui/icon-symbol';
 
 interface PremiumBannerProps {
@@ -10,10 +11,16 @@ interface PremiumBannerProps {
 export function PremiumBanner({ onPress, onDismiss }: PremiumBannerProps) {
   return (
     <View className="px-5 mb-4">
-      <View className="bg-gradient-to-br from-blue-500 to-blue-600 rounded-2xl p-6 shadow-sm border border-blue-400 overflow-hidden">
-        {/* Decorative background elements */}
-        <View className="absolute -right-4 -top-4 w-24 h-24 bg-white/10 rounded-full" />
-        <View className="absolute -left-2 -bottom-2 w-16 h-16 bg-white/10 rounded-full" />
+      <View className="rounded-2xl overflow-hidden shadow-sm">
+        <LinearGradient
+          colors={['#3B82F6', '#2563EB']}
+          start={{ x: 0, y: 0 }}
+          end={{ x: 1, y: 1 }}
+          style={{ padding: 24 }}
+        >
+          {/* Decorative background elements */}
+          <View className="absolute -right-4 -top-4 w-24 h-24 bg-white/10 rounded-full" />
+          <View className="absolute -left-2 -bottom-2 w-16 h-16 bg-white/10 rounded-full" />
 
         {/* Close button */}
         <TouchableOpacity
@@ -54,6 +61,7 @@ export function PremiumBanner({ onPress, onDismiss }: PremiumBannerProps) {
             <IconSymbol name="arrow.right" size={16} color="#2563EB" />
           </View>
         </TouchableOpacity>
+        </LinearGradient>
       </View>
     </View>
   );

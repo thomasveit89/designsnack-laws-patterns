@@ -42,8 +42,9 @@ export function PremiumModal({ visible, onClose }: PremiumModalProps) {
   };
 
   return (
+    <>
     <Modal
-      visible={visible}
+      visible={visible && !showSuccessModal}
       animationType="slide"
       presentationStyle="pageSheet"
       onRequestClose={onClose}
@@ -169,6 +170,7 @@ export function PremiumModal({ visible, onClose }: PremiumModalProps) {
           </TouchableOpacity>
         </View>
       </View>
+    </Modal>
 
       {/* Success Modal */}
       <Modal
@@ -200,6 +202,6 @@ export function PremiumModal({ visible, onClose }: PremiumModalProps) {
           </View>
         </View>
       </Modal>
-    </Modal>
+    </>
   );
 }

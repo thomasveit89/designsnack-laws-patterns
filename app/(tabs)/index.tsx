@@ -9,6 +9,7 @@ import Animated, {
 import { SafeAreaView, useSafeAreaInsets } from 'react-native-safe-area-context';
 import { useRouter } from 'expo-router';
 import { PrincipleListCard } from '@/src/components/library/PrincipleListCard';
+import { PremiumBanner } from '@/src/components/library/PremiumBanner';
 import { SearchInput } from '@/src/components/ui/SearchInput';
 import { CategoryChip } from '@/src/components/shared/CategoryChip';
 import { LoadingSkeletons } from '@/src/components/ui/SkeletonLoader';
@@ -25,7 +26,7 @@ type CategoryFilter = 'all' | 'favorites' | string;
 export default function LibraryScreen() {
   const { principles, loadPrinciples, isLoading } = usePrinciples();
   const { loadFavorites, getFavoriteIds, getFavoriteCount } = useFavorites();
-  const { isPremium, initialize } = usePurchase();
+  const { isPremium, isBannerDismissed, dismissBanner } = usePurchase();
   const [searchQuery, setSearchQuery] = useState('');
   const [categoryFilter, setCategoryFilter] = useState<CategoryFilter>('all');
   const [sortBy, setSortBy] = useState<SortOption>('alphabetical');
@@ -42,8 +43,7 @@ export default function LibraryScreen() {
   useEffect(() => {
     loadPrinciples();
     loadFavorites();
-    initialize();
-  }, [loadPrinciples, loadFavorites, initialize]);
+  }, [loadPrinciples, loadFavorites]);
 
   // Helper function to get category counts
   const getCategoryCount = (categoryLabel: string) => {
@@ -152,14 +152,6 @@ export default function LibraryScreen() {
     }
   };
 
-  const renderPrinciple = ({ item }: { item: Principle }) => (
-    <PrincipleListCard
-      key={item.id}
-      principle={item}
-      onPress={() => handlePrinciplePress(item)}
-    />
-  );
-
   const renderItem = ({ item, index }: { item: Principle; index: number }) => {
     const isLocked = isPrincipleLocked(index, isPremium);
     return (
@@ -170,6 +162,22 @@ export default function LibraryScreen() {
           isLocked={isLocked}
         />
       </View>
+    );
+  };
+
+  const renderListHeader = () => {
+    // Show banner if user is not premium and hasn't dismissed it
+    const shouldShowBanner = !isPremium && !isBannerDismissed;
+
+    if (!shouldShowBanner) {
+      return null;
+    }
+
+    return (
+      <PremiumBanner
+        onPress={() => setShowPremiumModal(true)}
+        onDismiss={dismissBanner}
+      />
     );
   };
 
@@ -301,6 +309,7 @@ export default function LibraryScreen() {
         data={filteredPrinciples}
         renderItem={renderItem}
         keyExtractor={(item) => item.id}
+        ListHeaderComponent={renderListHeader}
         ListEmptyComponent={isLoading ? renderLoadingState() : renderEmptyState()}
         onScroll={handleScroll}
         scrollEventThrottle={16}

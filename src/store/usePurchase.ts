@@ -18,18 +18,21 @@ const PREMIUM_SKU = Platform.select({
 
 const PURCHASE_KEY = 'premium_purchased';
 const DEV_MODE_KEY = 'dev_mode_premium'; // For testing in development
+const BANNER_DISMISSED_KEY = 'premium_banner_dismissed';
 
 interface PurchaseStore {
   isPremium: boolean;
   isLoading: boolean;
   isConnected: boolean;
   error: string | null;
+  isBannerDismissed: boolean;
 
   // Actions
   initialize: () => Promise<void>;
   purchasePremium: () => Promise<boolean>;
   restorePurchases: () => Promise<boolean>;
   checkPurchaseStatus: () => boolean;
+  dismissBanner: () => void;
 }
 
 export const usePurchase = create<PurchaseStore>((set, get) => ({
@@ -37,6 +40,7 @@ export const usePurchase = create<PurchaseStore>((set, get) => ({
   isLoading: false,
   isConnected: false,
   error: null,
+  isBannerDismissed: storage.getBoolean(BANNER_DISMISSED_KEY) || false,
 
   initialize: async () => {
     try {
@@ -110,10 +114,18 @@ export const usePurchase = create<PurchaseStore>((set, get) => ({
         return true;
       }
 
+      // Ensure we're connected before attempting purchase
       if (!get().isConnected) {
+        console.log('Not connected, initializing IAP...');
         await get().initialize();
+
+        // Double check we're connected after initialization
+        if (!get().isConnected) {
+          throw new Error('Failed to connect to the App Store. Please check your internet connection and try again.');
+        }
       }
 
+      console.log('Attempting to purchase:', PREMIUM_SKU);
       const { responseCode, results, errorCode } = await InAppPurchases.purchaseItemAsync(PREMIUM_SKU);
 
       if (responseCode === InAppPurchases.IAPResponseCode.OK) {
@@ -122,15 +134,17 @@ export const usePurchase = create<PurchaseStore>((set, get) => ({
         console.log('Purchase successful!', results);
         return true;
       } else if (responseCode === InAppPurchases.IAPResponseCode.USER_CANCELED) {
-        set({ isLoading: false });
+        console.log('Purchase canceled by user');
+        set({ isLoading: false, error: null });
         return false;
       } else {
-        throw new Error(`Purchase failed with code: ${errorCode}`);
+        throw new Error(`Purchase failed with error code: ${errorCode || 'unknown'}`);
       }
     } catch (error) {
       console.error('Purchase error:', error);
+      const errorMessage = error instanceof Error ? error.message : 'An unexpected error occurred. Please try again.';
       set({
-        error: error instanceof Error ? error.message : 'Purchase failed',
+        error: errorMessage,
         isLoading: false
       });
       return false;
@@ -148,15 +162,22 @@ export const usePurchase = create<PurchaseStore>((set, get) => ({
           set({ isPremium: true, isLoading: false });
           return true;
         } else {
-          set({ isLoading: false, error: 'No previous purchases found (dev mode)' });
+          set({ isLoading: false, error: 'No previous purchases found' });
           return false;
         }
       }
 
+      // Ensure we're connected before attempting restore
       if (!get().isConnected) {
+        console.log('Not connected, initializing IAP...');
         await get().initialize();
+
+        if (!get().isConnected) {
+          throw new Error('Failed to connect to the App Store. Please check your internet connection and try again.');
+        }
       }
 
+      console.log('Attempting to restore purchases...');
       const history = await InAppPurchases.getPurchaseHistoryAsync();
       const hasPurchased = history.results?.some(
         purchase => purchase.productId === PREMIUM_SKU &&
@@ -166,6 +187,7 @@ export const usePurchase = create<PurchaseStore>((set, get) => ({
       if (hasPurchased) {
         storage.set(PURCHASE_KEY, true);
         set({ isPremium: true, isLoading: false });
+        console.log('Purchase restored successfully!');
         return true;
       } else {
         set({ isLoading: false, error: 'No previous purchases found' });
@@ -173,8 +195,9 @@ export const usePurchase = create<PurchaseStore>((set, get) => ({
       }
     } catch (error) {
       console.error('Restore error:', error);
+      const errorMessage = error instanceof Error ? error.message : 'Failed to restore purchases. Please try again.';
       set({
-        error: error instanceof Error ? error.message : 'Failed to restore purchases',
+        error: errorMessage,
         isLoading: false
       });
       return false;
@@ -183,6 +206,11 @@ export const usePurchase = create<PurchaseStore>((set, get) => ({
 
   checkPurchaseStatus: () => {
     return get().isPremium || storage.getBoolean(PURCHASE_KEY) || false;
+  },
+
+  dismissBanner: () => {
+    storage.set(BANNER_DISMISSED_KEY, true);
+    set({ isBannerDismissed: true });
   },
 }));
 

@@ -1,5 +1,5 @@
-import React from 'react';
-import { View, Text, Modal, TouchableOpacity, ActivityIndicator, ScrollView } from 'react-native';
+import React, { useState } from 'react';
+import { View, Text, Modal, TouchableOpacity, ActivityIndicator, ScrollView, Alert } from 'react-native';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { IconSymbol } from '@/components/ui/icon-symbol';
 import { usePurchase } from '@/src/store/usePurchase';
@@ -11,20 +11,34 @@ interface PremiumModalProps {
 
 export function PremiumModal({ visible, onClose }: PremiumModalProps) {
   const insets = useSafeAreaInsets();
-  const { purchasePremium, restorePurchases, isLoading } = usePurchase();
+  const { purchasePremium, restorePurchases, isLoading, error } = usePurchase();
+  const [showSuccessModal, setShowSuccessModal] = useState(false);
 
   const handlePurchase = async () => {
     const success = await purchasePremium();
     if (success) {
-      onClose();
+      setShowSuccessModal(true);
+    } else if (error) {
+      Alert.alert('Purchase Failed', error, [{ text: 'OK' }]);
     }
   };
 
   const handleRestore = async () => {
     const success = await restorePurchases();
     if (success) {
-      onClose();
+      Alert.alert(
+        'Success',
+        'Your purchase has been restored!',
+        [{ text: 'OK', onPress: onClose }]
+      );
+    } else if (error) {
+      Alert.alert('Restore Failed', error, [{ text: 'OK' }]);
     }
+  };
+
+  const handleSuccessClose = () => {
+    setShowSuccessModal(false);
+    onClose();
   };
 
   return (
@@ -155,6 +169,37 @@ export function PremiumModal({ visible, onClose }: PremiumModalProps) {
           </TouchableOpacity>
         </View>
       </View>
+
+      {/* Success Modal */}
+      <Modal
+        visible={showSuccessModal}
+        animationType="fade"
+        transparent={true}
+        onRequestClose={handleSuccessClose}
+      >
+        <View className="flex-1 bg-black/50 items-center justify-center px-6">
+          <View className="bg-white rounded-3xl p-8 w-full max-w-sm items-center">
+            <View className="w-20 h-20 bg-green-100 rounded-full items-center justify-center mb-4">
+              <IconSymbol name="checkmark.circle.fill" size={48} color="#10B981" />
+            </View>
+            <Text className="text-2xl font-bold text-gray-900 mb-2 text-center">
+              You're All Set!
+            </Text>
+            <Text className="text-base text-gray-600 text-center mb-6">
+              Thank you for your purchase! You now have access to all 102 UX principles.
+            </Text>
+            <TouchableOpacity
+              onPress={handleSuccessClose}
+              className="w-full"
+              activeOpacity={0.8}
+            >
+              <View className="bg-blue-500 rounded-2xl py-4 items-center">
+                <Text className="text-white text-lg font-semibold">Start Exploring</Text>
+              </View>
+            </TouchableOpacity>
+          </View>
+        </View>
+      </Modal>
     </Modal>
   );
 }

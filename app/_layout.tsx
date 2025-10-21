@@ -9,6 +9,7 @@ import { useColorScheme } from '@/hooks/use-color-scheme';
 import { useQuiz } from '@/src/store/useQuiz';
 import { usePrinciples } from '@/src/store/usePrinciples';
 import { useFavorites } from '@/src/store/useFavorites';
+import { usePurchase } from '@/src/store/usePurchase';
 
 export const unstable_settings = {
   anchor: '(tabs)',
@@ -19,14 +20,18 @@ export default function RootLayout() {
   const { initializeSync } = useQuiz();
   const { principles, loadPrinciples } = usePrinciples();
   const { loadFavorites } = useFavorites();
+  const { initialize: initializePurchase } = usePurchase();
 
-  // Load favorites and principles when app starts
+  // Initialize IAP, load favorites and principles when app starts
   useEffect(() => {
+    initializePurchase().catch(error => {
+      console.error('Failed to initialize purchases:', error);
+    });
     loadFavorites();
     loadPrinciples().catch(error => {
       console.error('Failed to load principles:', error);
     });
-  }, [loadPrinciples, loadFavorites]);
+  }, [initializePurchase, loadPrinciples, loadFavorites]);
 
   // Initialize sync service when principles are loaded
   useEffect(() => {

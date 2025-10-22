@@ -26,6 +26,7 @@ interface PurchaseStore {
   isConnected: boolean;
   error: string | null;
   isBannerDismissed: boolean;
+  availableProducts: any[]; // Store loaded products
 
   // Actions
   initialize: () => Promise<void>;
@@ -41,6 +42,7 @@ export const usePurchase = create<PurchaseStore>((set, get) => ({
   isConnected: false,
   error: null,
   isBannerDismissed: false, // Always starts as false - banner reappears on app restart!
+  availableProducts: [],
 
   initialize: async () => {
     try {
@@ -78,8 +80,12 @@ export const usePurchase = create<PurchaseStore>((set, get) => ({
       // Get available products
       const { responseCode, results } = await InAppPurchases.getProductsAsync([PREMIUM_SKU]);
 
-      if (responseCode === InAppPurchases.IAPResponseCode.OK) {
+      if (responseCode === InAppPurchases.IAPResponseCode.OK && results) {
         console.log('Premium product available:', results);
+        set({ availableProducts: results });
+      } else {
+        console.warn('Failed to load products. This is normal in TestFlight until IAP is approved.');
+        set({ availableProducts: [] });
       }
 
       // Check purchase history
@@ -126,6 +132,14 @@ export const usePurchase = create<PurchaseStore>((set, get) => ({
         if (!get().isConnected) {
           throw new Error('Failed to connect to the App Store. Please check your internet connection and try again.');
         }
+      }
+
+      // Verify product is available before attempting purchase
+      const { availableProducts } = get();
+      const productAvailable = availableProducts.some(p => p.productId === PREMIUM_SKU);
+
+      if (!productAvailable) {
+        throw new Error('This purchase is not yet available. The in-app purchase is pending review by Apple. Please try again after the app is approved.');
       }
 
       console.log('Attempting to purchase:', PREMIUM_SKU);

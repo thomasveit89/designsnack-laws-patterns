@@ -78,19 +78,19 @@ export const usePurchase = create<PurchaseStore>((set, get) => ({
       set({ isConnected: true });
 
       // Get available products
-      const { responseCode, results } = await InAppPurchases.getProductsAsync([PREMIUM_SKU]);
+      const productsResponse = await InAppPurchases.getProductsAsync([PREMIUM_SKU]);
 
-      if (responseCode === InAppPurchases.IAPResponseCode.OK && results) {
-        console.log('Premium product available:', results);
-        set({ availableProducts: results });
+      if (productsResponse && productsResponse.responseCode === InAppPurchases.IAPResponseCode.OK && productsResponse.results) {
+        console.log('Premium product available:', productsResponse.results);
+        set({ availableProducts: productsResponse.results });
       } else {
-        console.warn('Failed to load products. This is normal in TestFlight until IAP is approved.');
+        console.warn('Failed to load products:', productsResponse);
         set({ availableProducts: [] });
       }
 
       // Check purchase history
       const history = await InAppPurchases.getPurchaseHistoryAsync();
-      const hasPurchased = history.results?.some(
+      const hasPurchased = history?.results?.some(
         purchase => purchase.productId === PREMIUM_SKU &&
                    (purchase as any).purchaseState === InAppPurchases.InAppPurchaseState.PURCHASED
       );
@@ -143,7 +143,13 @@ export const usePurchase = create<PurchaseStore>((set, get) => ({
       }
 
       console.log('Attempting to purchase:', PREMIUM_SKU);
-      const { responseCode, results, errorCode } = await InAppPurchases.purchaseItemAsync(PREMIUM_SKU);
+      const purchaseResponse = await InAppPurchases.purchaseItemAsync(PREMIUM_SKU);
+
+      if (!purchaseResponse) {
+        throw new Error('Purchase request failed. Please try again.');
+      }
+
+      const { responseCode, results, errorCode } = purchaseResponse;
 
       if (responseCode === InAppPurchases.IAPResponseCode.OK) {
         storage.set(PURCHASE_KEY, true);

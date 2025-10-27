@@ -48,6 +48,10 @@ export const usePurchase = create<PurchaseStore>((set, get) => ({
     try {
       set({ isLoading: true, error: null });
 
+      // Wait for storage to be ready before checking
+      await storage.waitForReady();
+      console.log('💾 Storage ready, checking purchase status');
+
       // Check local storage first
       const localPurchase = storage.getBoolean(PURCHASE_KEY);
       console.log('💾 Checking local purchase:', localPurchase);
@@ -88,16 +92,24 @@ export const usePurchase = create<PurchaseStore>((set, get) => ({
         set({ availableProducts: [] });
       }
 
-      // Check purchase history
+      // Check purchase history from App Store
+      console.log('📜 Checking purchase history from App Store...');
       const history = await InAppPurchases.getPurchaseHistoryAsync();
+      console.log('📜 Purchase history response:', history);
+
       const hasPurchased = history?.results?.some(
         purchase => purchase.productId === PREMIUM_SKU &&
                    (purchase as any).purchaseState === InAppPurchases.InAppPurchaseState.PURCHASED
       );
 
       if (hasPurchased) {
+        console.log('✅ Purchase found in App Store history! Saving to storage...');
         storage.set(PURCHASE_KEY, true);
+        await new Promise(resolve => setTimeout(resolve, 100));
+        console.log('💾 Purchase saved to storage');
         set({ isPremium: true });
+      } else {
+        console.log('ℹ️ No purchase found in App Store history');
       }
 
       set({ isLoading: false });
@@ -152,9 +164,12 @@ export const usePurchase = create<PurchaseStore>((set, get) => ({
       const { responseCode, results, errorCode } = purchaseResponse;
 
       if (responseCode === InAppPurchases.IAPResponseCode.OK) {
+        console.log('✅ Purchase successful! Saving to storage...', results);
         storage.set(PURCHASE_KEY, true);
+        // Wait a moment to ensure AsyncStorage write completes
+        await new Promise(resolve => setTimeout(resolve, 100));
+        console.log('💾 Purchase saved to storage');
         set({ isPremium: true, isLoading: false });
-        console.log('Purchase successful!', results);
         return true;
       } else if (responseCode === InAppPurchases.IAPResponseCode.USER_CANCELED) {
         console.log('Purchase canceled by user');
@@ -202,17 +217,23 @@ export const usePurchase = create<PurchaseStore>((set, get) => ({
 
       console.log('Attempting to restore purchases...');
       const history = await InAppPurchases.getPurchaseHistoryAsync();
-      const hasPurchased = history.results?.some(
+      console.log('📜 Purchase history:', history);
+
+      const hasPurchased = history?.results?.some(
         purchase => purchase.productId === PREMIUM_SKU &&
                    (purchase as any).purchaseState === InAppPurchases.InAppPurchaseState.PURCHASED
       );
 
       if (hasPurchased) {
+        console.log('✅ Purchase found in history! Saving to storage...');
         storage.set(PURCHASE_KEY, true);
+        // Wait a moment to ensure AsyncStorage write completes
+        await new Promise(resolve => setTimeout(resolve, 100));
+        console.log('💾 Purchase saved to storage');
         set({ isPremium: true, isLoading: false });
-        console.log('Purchase restored successfully!');
         return true;
       } else {
+        console.log('❌ No previous purchases found');
         set({ isLoading: false, error: 'No previous purchases found' });
         return false;
       }

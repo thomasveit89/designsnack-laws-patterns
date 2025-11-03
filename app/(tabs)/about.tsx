@@ -1,8 +1,9 @@
 import React from 'react';
-import { Text, View, ScrollView, TouchableOpacity, Linking, Alert } from 'react-native';
+import { Text, View, ScrollView, TouchableOpacity, Linking, Alert, Platform } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { useRouter } from 'expo-router';
 import Constants from 'expo-constants';
+import * as StoreReview from 'expo-store-review';
 import { DesignsnackLogo } from '@/src/components/ui/DesignsnackLogo';
 
 export default function AboutScreen() {
@@ -28,6 +29,37 @@ export default function AboutScreen() {
 
   const openTermsOfService = () => {
     router.push('/legal/terms-of-service');
+  };
+
+  const handleRateApp = async () => {
+    try {
+      // Check if the device supports in-app reviews
+      const isAvailable = await StoreReview.isAvailableAsync();
+
+      if (isAvailable) {
+        // Request the native in-app review dialog
+        await StoreReview.requestReview();
+      } else {
+        // Fallback for development/testing: open store page directly
+        const storeUrl = Platform.select({
+          ios: Constants.expoConfig?.ios?.appStoreUrl ||
+               'https://apps.apple.com/app/id6754067995',
+          android: `https://play.google.com/store/apps/details?id=${Constants.expoConfig?.android?.package || 'com.designsnack.lawspatterns'}`,
+          default: 'https://designsnack.ch'
+        });
+
+        await openURL(storeUrl);
+      }
+    } catch (error) {
+      console.error('Error opening store review:', error);
+      Alert.alert(
+        'Rate Our App',
+        Platform.OS === 'ios'
+          ? 'Please rate us on the App Store to support our work!'
+          : 'Please rate us on the Play Store to support our work!',
+        [{ text: 'OK' }]
+      );
+    }
   };
 
   return (
@@ -150,14 +182,7 @@ export default function AboutScreen() {
             </TouchableOpacity>
 
             <TouchableOpacity
-              onPress={() => {
-                // This would typically open the App Store rating page
-                Alert.alert(
-                  'Rate the App',
-                  'Thank you for considering rating our app! This feature will be available once the app is published on the App Store.',
-                  [{ text: 'OK' }]
-                );
-              }}
+              onPress={handleRateApp}
               className="flex-row items-center justify-between p-3 bg-gray-50 rounded-lg"
               activeOpacity={0.7}
             >

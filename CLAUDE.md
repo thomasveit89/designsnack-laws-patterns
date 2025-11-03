@@ -28,6 +28,7 @@
 ├── (tabs)/                    # Tab navigation
 │   ├── index.tsx             # Library screen (default home)
 │   ├── quiz.tsx              # Practice screen
+│   ├── about.tsx             # About screen with Rate App feature
 │   └── _layout.tsx           # Tab layout config
 ├── principle/[id].tsx        # Principle detail view
 ├── flashcards.tsx            # Flashcard practice
@@ -38,8 +39,9 @@
 ├── components/               # Reusable UI components
 ├── lib/                     # Core services
 │   ├── api.ts              # Backend API client
-│   ├── openai.ts           # Quiz generation logic
+│   ├── openai.ts           # Quiz generation logic + auto-generation
 │   ├── questionCache.ts    # Question caching system
+│   ├── questionHistory.ts  # Question deduplication tracker
 │   ├── storage.ts          # MMKV storage wrapper
 │   └── config.ts           # App configuration
 ├── store/                  # Zustand state stores
@@ -130,9 +132,43 @@
 
 ---
 
-## ⚡ Recent Critical Fixes
+## ⚡ Recent Updates & Fixes
 
-### Quiz Answer Randomization Bug (FIXED ✅)
+### Latest Improvements (January 2025) ✅
+
+#### 1. Rate the App Feature (iOS & Android Ready)
+**Location:** `app/(tabs)/about.tsx:34-63`
+- Integrated `expo-store-review` for native in-app rating prompts
+- iOS: Shows native in-app review dialog
+- Android: Opens Play Store rating page
+- Fallback URLs configured for both platforms
+- Apple Store ID: 6754067995
+
+#### 2. Quiz Experience Enhancements
+**Instant Visual Feedback:**
+- Questions now show correct answer immediately after selection
+- Green highlighting ✓ for correct answer
+- Red highlighting ✗ for wrong selection
+- Options lock after selection (prevents answer changes)
+- No explanation shown (answer clarity is sufficient)
+- Implementation: `src/components/quiz/QuizQuestion.tsx` + `app/quiz-session.tsx:236`
+
+**Question Deduplication System:**
+- Tracks last 100 seen questions in local storage
+- Smart exclusion: 70% for small quizzes, 30% for large quizzes
+- Significantly reduces duplicate questions in favorites mode
+- Implementation: `src/lib/questionHistory.ts`
+
+**Automatic Question Generation:**
+- Detects when question pool is exhausted
+- Automatically triggers ChatGPT to generate fresh questions
+- Seamlessly fills gaps without user interruption
+- Generated questions are cached for future use
+- Implementation: `src/lib/openai.ts:102-122`
+
+### Previous Critical Fixes
+
+#### Quiz Answer Randomization Bug (FIXED ✅)
 **Issue:** Correct answers were always "A" regardless of content
 **Root Cause:** Flawed `shuffleAnswerPosition` logic in `backend/lib/openai.ts:240-268`
 **Solution:**
@@ -141,11 +177,44 @@
 - Regenerated 72 questions with balanced distribution
 - Verified: A(25.1%), B(23.7%), C(29.4%), D(21.8%)
 
-### UI Consistency Improvements
+#### UI Consistency Improvements
 - Applied card-based layout across Practice, Flashcards, Quiz Setup screens
 - Fixed TouchableOpacity transparency bug by separating touch handling from styling
 - Made all screens scrollable with proper safe area handling
 - Removed home screen, made Library the default index tab
+
+---
+
+## 📦 App Version Management
+
+**Current Version:** 1.0.1 (see `app.json`)
+
+### When to Update Version
+Update the version in `app.json` after:
+- Bug fixes or improvements
+- New features
+- UI/UX enhancements
+- Before submitting to App Store/Play Store
+
+### Version Format
+- **Major.Minor.Patch** (e.g., 1.0.1)
+- **Patch** (1.0.x): Bug fixes, small improvements
+- **Minor** (1.x.0): New features, enhancements
+- **Major** (x.0.0): Breaking changes, major redesigns
+
+### How to Update
+```bash
+# Edit app.json
+"version": "1.0.2"  # Increment appropriately
+
+# For iOS builds, EAS handles build numbers automatically with autoIncrement
+# For Android, update versionCode in app.json if needed
+```
+
+### 🔔 VERSION UPDATE REMINDER
+**Action Required:** After implementing fixes/improvements, update version in:
+- `app.json` → `expo.version` field
+- Consider updating release notes for store submissions
 
 ---
 
@@ -263,4 +332,19 @@ cd designsnack-laws-patterns && npx tsx scripts/clear-quiz-cache.ts
 
 ---
 
-*Last Updated: September 2025 - Post Quiz Bug Fix*
+---
+
+## 📋 Maintenance Checklist
+
+When making significant changes, remember to:
+- [ ] Update this CLAUDE.md file with new features/fixes
+- [ ] Update app version in `app.json`
+- [ ] Test on both iOS and Android (if applicable)
+- [ ] Update release notes for store submissions
+- [ ] Check for TypeScript errors: `npx tsc --noEmit`
+- [ ] Verify builds: `eas build --platform ios/android --profile production`
+
+---
+
+*Last Updated: January 2025 - Quiz Improvements & Rate App Feature*
+*Auto-update: This file should be updated by Claude Code after each significant change*

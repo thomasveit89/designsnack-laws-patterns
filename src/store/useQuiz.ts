@@ -4,6 +4,7 @@ import { generateQuizQuestions, getFallbackQuizQuestions } from '../lib/openai';
 import { storage } from '../lib/storage';
 import { SyncService } from '../lib/syncService';
 import { QuestionCacheService } from '../lib/questionCache';
+import { QuestionHistoryService } from '../lib/questionHistory';
 import { config } from '../lib/config';
 import { getQuestionCount } from '../lib/quiz-config';
 
@@ -167,21 +168,25 @@ export const useQuiz = create<QuizState>((set, get) => ({
       scorePercentage: Math.round((completedSession.score / completedSession.questions.length) * 100),
       averageTimePerQuestion: Math.round(averageTimePerQuestion / 1000), // Convert to seconds
     };
-    
+
+    // Add questions to history to prevent duplicates in future quizzes
+    const questionIds = completedSession.questions.map(q => q.id);
+    QuestionHistoryService.addQuestionsToHistory(questionIds);
+
     // Save to history
     const updatedHistory = [...state.completedSessions, result];
     set({
       completedSessions: updatedHistory,
       currentSession: null,
     });
-    
+
     // Persist to storage
     try {
       storage.set(QUIZ_HISTORY_KEY, JSON.stringify(updatedHistory));
     } catch (error) {
       console.error('Failed to save quiz history:', error);
     }
-    
+
     return result;
   },
 

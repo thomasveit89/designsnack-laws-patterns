@@ -233,6 +233,7 @@ export default function QuizSessionScreen() {
   const currentAnswer = currentSession.answers.find(a => a.questionId === currentQuestion.id);
   const hasAnsweredCurrent = currentAnswer !== undefined;
   const progress = ((currentSession.currentQuestionIndex + 1) / currentSession.questions.length) * 100;
+  const showResult = hasAnsweredCurrent; // Show correct answer immediately after selection
 
   return (
     <>
@@ -281,6 +282,7 @@ export default function QuizSessionScreen() {
               question={currentQuestion}
               selectedAnswer={currentAnswer?.selectedAnswer ?? null}
               onSelectAnswer={handleAnswerSelect}
+              showResult={showResult}
               className="flex-1"
             />
           </View>

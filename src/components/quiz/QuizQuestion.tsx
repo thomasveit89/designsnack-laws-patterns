@@ -118,17 +118,6 @@ export function QuizQuestion({
         ))}
       </View>
 
-      {/* Explanation (only shown in result mode) */}
-      {showResult && question.explanation && (
-        <View className="mt-4 p-4 bg-blue-50 rounded-xl">
-          <Text className="text-sm font-semibold text-blue-900 mb-2">
-            💡 Explanation
-          </Text>
-          <Text className="text-sm text-blue-800">
-            {question.explanation}
-          </Text>
-        </View>
-      )}
     </View>
   );
 }
